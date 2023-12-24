@@ -1,0 +1,26 @@
+
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "description": "Бот для учета ТМЦ",
+  "main": "main.js",
+  "scripts": {
+    "typescript": "tsc -w",
+    "watch node": "node --watch main.js",
+    "watch node log": "node --watch main.js > bot_log.log 2 > bot_err.log"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
+    "axios": "^1.4.0",
+    "googleapis": "^105.0.0",
+    "node-fetch": "^2.6.11",
+    "node-telegram-bot-api": "^0.61.0",
+    "telegram-inline-calendar": "^1.6.4"
+  },
+  "devDependencies": {
+    "@types/node-telegram-bot-api": "^0.61.6",
+    "typescript": "^5.1.6"
+  }
+}
