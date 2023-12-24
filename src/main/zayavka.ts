@@ -41,13 +41,13 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
         dateCreated: 'Null' 
     }
 
-    Object(msg, c, false, ()=>{
-        Dostavka(msg, c, false,  ()=>{
-            Time(msg, c, false, ()=>{ 
-                Tools(msg, c, false, ()=>{  // расходники за инструментом
-                    Rashodniki(msg, c, false, true, ()=>{
-                        Comment(msg, c, false, ()=>{  
-                            Confirm(msg, c, async ()=>{ 
+    await Object(msg, c, false, async ()=>{
+        await Dostavka(msg, c, false, async ()=>{
+            await Time(msg, c, false, async ()=>{ 
+                await Tools(msg, c, false, async ()=>{  // расходники за инструментом
+                    await Rashodniki(msg, c, false, true, async ()=>{
+                        await Comment(msg, c, false, async ()=>{  
+                            await Confirm(msg, c, async ()=>{ 
 
                                 await saveRequest(msg, c)
                                 await c.botUI.message(msg, TX_REQEST_CONFIRMED)

@@ -55,7 +55,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
             if (query.data === 'asap') {
                 c.data[msg.chat.id].dateTime = 'По готовности'
                 await c.botUI.message(msg, TX_ASAP_REPLY)
-                end()
+                await end()
             } else {
                 c.botUI.context(msg,  async ()=>{
                     calendar.startNavCalendar(msg)
@@ -75,7 +75,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                                 await c.botUI.message(msg, TX_CUSTOM_REPLY + '*' + date + ' | ' + time + '*')
                                 c.data[msg.chat.id].dateTime = date + ' | ' + time
 
-                                end()
+                                await end()
 
                             }
                         }

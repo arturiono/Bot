@@ -127,13 +127,13 @@ let MRashodniki = async (msg:any, c: MainContext, editMode:Boolean, showInitialM
             showRashodnikMessage(id, true, true)
         }
         addedRashodnikiMsgIds[msg.chat.id] = undefined //сбрасываем глобальную переменную
-        end()
+        await end()
 
     }
 
     const endRashodnikiConfirmed = async ()=>{ 
         await c.botUI.message(msg, TX_END_CONFIRMED)
-        endRashodniki()
+        await endRashodniki()
     }
 
     const endRashodnikiNotConfirmed = async ()=>{
@@ -144,7 +144,6 @@ let MRashodniki = async (msg:any, c: MainContext, editMode:Boolean, showInitialM
 
     // ### логика обработки расходника используется в двух местах
     const callbackRashodnikControls = async (data:string) => {
-
 
             let updateRashodnikiMsg = async (id: string)=>{
                 await showRashodnikMessage(id, true)

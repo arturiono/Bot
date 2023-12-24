@@ -100,8 +100,8 @@ exports.default = (msg, c, editTools, end) => __awaiter(void 0, void 0, void 0, 
                             });
                             c.data[msg.chat.id].tools = tools;
                         };
-                        saveAll();
-                        end();
+                        yield saveAll();
+                        yield end();
                     }
                     else if (query.data === 'selective') {
                         let getAddMessage = (ind, showButton) => {
@@ -197,13 +197,13 @@ exports.default = (msg, c, editTools, end) => __awaiter(void 0, void 0, void 0, 
                                         }
                                         c.botUI.deleteAllMarked(msg);
                                         // 3. Конец
-                                        end();
+                                        yield end();
                                     }
                                 }
                                 else if (type === 'end-confirmed') {
                                     yield c.botUI.message(msg, TX_END_CONFIRMED);
                                     c.botUI.deleteAllMarked(msg);
-                                    end();
+                                    yield end();
                                 }
                                 else if (type === 'end-not-confirmed') {
                                     // удалить сообщение и продолжить
@@ -220,7 +220,7 @@ exports.default = (msg, c, editTools, end) => __awaiter(void 0, void 0, void 0, 
     // - - - - - - - - - - - - - - - 
     // если выбран параметр редакирования инструмента
     if (editTools) {
-        ObjectTools(c.data[msg.chat.id].from, end);
+        yield ObjectTools(c.data[msg.chat.id].from, end);
         return;
     }
     c.botUI.context(msg, () => __awaiter(void 0, void 0, void 0, function* () {
@@ -233,7 +233,7 @@ exports.default = (msg, c, editTools, end) => __awaiter(void 0, void 0, void 0, 
         // Если только один обьект то пропускаем выбор
         const keyArr = Object.keys(toolsOrderedByObject);
         if (keyArr.length === 1) {
-            ObjectTools(keyArr[0], end);
+            yield ObjectTools(keyArr[0], end);
             return;
         }
         const tx = c.data[msg.chat.id].type === 'Возврат' ? TX_INITIAL_MESSAGE_RETURN : TX_INITIAL_MESSAGE_BETWEEN;
@@ -273,7 +273,7 @@ exports.default = (msg, c, editTools, end) => __awaiter(void 0, void 0, void 0, 
             const oid = query.data.split('_')[1];
             if (type === 'select') {
                 c.data[msg.chat.id].from = oid;
-                ObjectTools(oid, end);
+                yield ObjectTools(oid, end);
             }
         })
     });

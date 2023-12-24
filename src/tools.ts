@@ -176,7 +176,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                         '\n' + cachedObject[id].desc)
                     }
 
-                    end()
+                    await end()
                 }
                 
             // S. нажата кнопка подтверждения выхода без инструмента
@@ -185,7 +185,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                 await c.botUI.message(msg, TX_END_CONFIRMED)
                 c.botUI.deleteAllMarked(msg)
                 clearsearchResultMessagess()
-                end()
+                await end()
             
             // S. продолжаем добавление инструмента
             } else if(query.data === 'end-not-confirmed') { 
@@ -225,5 +225,4 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
         }
     })
 
-    // end()
 }

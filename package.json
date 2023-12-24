@@ -7,7 +7,7 @@
   "scripts": {
     "typescript": "tsc -w",
     "watch node": "node --watch main.js",
-    "watch node log": "node --watch main.js > bot_log.log 2 > bot_err.log"
+    "node log errors": "node > bot_log.log 2 > bot_err.log"
   },
   "author": "",
   "license": "ISC",

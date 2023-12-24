@@ -73,7 +73,7 @@ const Manager = (msg, c, end, updateData = true) => __awaiter(void 0, void 0, vo
     // console.log(zayavkiTable)
     const messagesIds = {};
     c.botUI.context(msg, () => __awaiter(void 0, void 0, void 0, function* () {
-        c.botUI.deleteAllMarked(msg);
+        yield c.botUI.deleteAllMarked(msg);
         let found = false;
         for (const [i, phone] of zayavkiTable['Cотрудник'].entries()) {
             // только актуальные заявки показываем
@@ -120,7 +120,7 @@ const Manager = (msg, c, end, updateData = true) => __awaiter(void 0, void 0, vo
                 // Cofirm2
                 // - вернутся
                 // - 
-                (0, edit_1.default)(msg, c, (isEdited) => __awaiter(void 0, void 0, void 0, function* () {
+                yield (0, edit_1.default)(msg, c, (isEdited) => __awaiter(void 0, void 0, void 0, function* () {
                     if (isEdited) {
                         yield (0, saveRequest_1.saveRequest)(msg, c, id);
                         yield c.botUI.message(msg, TX_EDIT_CONFIRMED);
@@ -131,7 +131,7 @@ const Manager = (msg, c, end, updateData = true) => __awaiter(void 0, void 0, vo
                     }
                     else {
                         // console.log('ВЕРНУТЬСЯ HAPPEN')
-                        Manager(msg, c, end);
+                        yield Manager(msg, c, end);
                     }
                 }), false, usersTable); // запускаем сценарий confirmation сразу с редактирования
             }
@@ -241,7 +241,7 @@ const Manager = (msg, c, end, updateData = true) => __awaiter(void 0, void 0, vo
                         const ind = split[2];
                         if (type === 'back') {
                             c.botUI.deleteAllMarked(msg);
-                            Manager(msg, c, end);
+                            yield Manager(msg, c, end);
                             // const STATUS_OBRABOTKA = "Обработка"
                             // const STATUS_SOBRAN = "Собран"
                             // const STATUS_DOSTAVKA = "Доставка"
@@ -268,10 +268,10 @@ const Manager = (msg, c, end, updateData = true) => __awaiter(void 0, void 0, vo
                                 c.botUI.deleteAllMarked(msg);
                                 c.data[msg.chat.id] = (0, requestConverter_1.zayavkaToData)(ind, zayavkiTable);
                                 yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], true, usersTable), { mark_to_remove: true });
-                                (0, yesno_1.default)(msg, c, TX_CONFIRN_OBJ, () => __awaiter(void 0, void 0, void 0, function* () {
+                                yield (0, yesno_1.default)(msg, c, TX_CONFIRN_OBJ, () => __awaiter(void 0, void 0, void 0, function* () {
                                     yield save();
                                 }), () => __awaiter(void 0, void 0, void 0, function* () {
-                                    Manager(msg, c, end);
+                                    yield Manager(msg, c, end);
                                 }));
                             }
                             else {

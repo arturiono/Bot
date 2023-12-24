@@ -120,8 +120,8 @@ export default async (msg:any, c: MainContext, editTools:boolean, end:()=>any) =
                         c.data[msg.chat.id].tools = tools
                     }
                     
-                    saveAll()
-                    end()
+                    await saveAll()
+                    await end()
 
                 } else if(query.data === 'selective') {
 
@@ -263,7 +263,7 @@ export default async (msg:any, c: MainContext, editTools:boolean, end:()=>any) =
                                     c.botUI.deleteAllMarked(msg)
                                     
                                     // 3. Конец
-                                    end()
+                                    await end()
 
                                 }   
 
@@ -271,7 +271,7 @@ export default async (msg:any, c: MainContext, editTools:boolean, end:()=>any) =
 
                                 await c.botUI.message(msg, TX_END_CONFIRMED)
                                 c.botUI.deleteAllMarked(msg)
-                                end()
+                                await end()
 
                             } else if(type === 'end-not-confirmed') {
 
@@ -298,7 +298,7 @@ export default async (msg:any, c: MainContext, editTools:boolean, end:()=>any) =
 
     // если выбран параметр редакирования инструмента
     if(editTools) {
-        ObjectTools(c.data[msg.chat.id].from, end)
+        await ObjectTools(c.data[msg.chat.id].from, end)
         return 
     }
 
@@ -314,7 +314,7 @@ export default async (msg:any, c: MainContext, editTools:boolean, end:()=>any) =
         // Если только один обьект то пропускаем выбор
         const keyArr = Object.keys(toolsOrderedByObject)
         if(keyArr.length === 1) {
-            ObjectTools(keyArr[0], end)
+            await ObjectTools(keyArr[0], end)
             return
         }
 
@@ -370,7 +370,7 @@ export default async (msg:any, c: MainContext, editTools:boolean, end:()=>any) =
             if(type === 'select') {
 
                 c.data[msg.chat.id].from = oid
-                ObjectTools(oid, end)
+                await ObjectTools(oid, end)
 
             } 
 

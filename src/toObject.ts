@@ -105,7 +105,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                 c.data[msg.chat.id].to = objTable['Auto #'][ind]
 
                 c.botUI.deleteAllMarked(msg)
-                end() //все данные сохранены, сценарий закончен
+                await end() //все данные сохранены, сценарий закончен
             
             } else if(type === 'delete') {
                 
@@ -153,7 +153,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                         
                         await c.botUI.message(msg, TX_CUSTOM_FINAL)
                         c.botUI.deleteAllMarked(msg)   
-                        end()
+                        await end()
                     }
                 })
 

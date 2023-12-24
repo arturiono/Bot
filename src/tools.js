@@ -148,7 +148,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
                         yield c.botUI.message(msg, TX_TOOL + '*' + cachedObject[id].name + '*' +
                             '\n' + cachedObject[id].desc);
                     }
-                    end();
+                    yield end();
                 }
                 // S. нажата кнопка подтверждения выхода без инструмента
             }
@@ -157,7 +157,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
                 yield c.botUI.message(msg, TX_END_CONFIRMED);
                 c.botUI.deleteAllMarked(msg);
                 clearsearchResultMessagess();
-                end();
+                yield end();
                 // S. продолжаем добавление инструмента
             }
             else if (query.data === 'end-not-confirmed') {
@@ -190,5 +190,4 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
             }
         })
     });
-    // end()
 });

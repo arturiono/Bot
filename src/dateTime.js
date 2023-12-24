@@ -55,7 +55,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
             if (query.data === 'asap') {
                 c.data[msg.chat.id].dateTime = 'По готовности';
                 yield c.botUI.message(msg, TX_ASAP_REPLY);
-                end();
+                yield end();
             }
             else {
                 c.botUI.context(msg, () => __awaiter(void 0, void 0, void 0, function* () {
@@ -71,7 +71,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
                                 const time = d[1].split('_')[0];
                                 yield c.botUI.message(msg, TX_CUSTOM_REPLY + '*' + date + ' | ' + time + '*');
                                 c.data[msg.chat.id].dateTime = date + ' | ' + time;
-                                end();
+                                yield end();
                             }
                         }
                     })

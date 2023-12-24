@@ -12,8 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const TX_BTN_YES = "Да";
 const TX_BTN_NO = "Нет";
 exports.default = (msg, c, initialMsg, yes, no) => __awaiter(void 0, void 0, void 0, function* () {
-    // console.log('HAPPEN')
-    // console.log(initialMsg)
     c.botUI.context(msg, () => __awaiter(void 0, void 0, void 0, function* () {
         const opts = {
             reply_markup: { inline_keyboard: [

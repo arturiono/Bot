@@ -92,7 +92,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
                 yield c.botUI.message(msg, TX + name);
                 c.data[msg.chat.id].to = objTable['Auto #'][ind];
                 c.botUI.deleteAllMarked(msg);
-                end(); //все данные сохранены, сценарий закончен
+                yield end(); //все данные сохранены, сценарий закончен
             }
             else if (type === 'delete') {
                 const toolsData = yield c.tableUI.getList('Инструмент', ['Объект']);
@@ -126,7 +126,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
                         c.data[msg.chat.id].to = String(nextId);
                         yield c.botUI.message(msg, TX_CUSTOM_FINAL);
                         c.botUI.deleteAllMarked(msg);
-                        end();
+                        yield end();
                     })
                 });
             }

@@ -43,7 +43,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
             c.data[msg.chat.id].delivery = query.data === 'delivery' ? 'Да' : 'Нет';
             const SMSG = (query.data === 'self') ? TX_SUCESS_SELF : TX_SUCESS_DELIVERY;
             yield c.botUI.message(msg, SMSG);
-            end();
+            yield end();
         })
     });
 });

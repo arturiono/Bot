@@ -33,9 +33,9 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
         dateCreated: 'Null' 
     }
 
-    let otherCall = ()=>{
-        Comment(msg, c, false, ()=>{  
-            Confirm(msg, c, async ()=>{ 
+    let otherCall = async ()=>{
+        await Comment(msg, c, false, async ()=>{  
+            await Confirm(msg, c, async ()=>{ 
                 await saveRequest(msg, c)
                 await c.botUI.message(msg, TX_REQEST_CONFIRMED)
                 
@@ -51,13 +51,13 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
         })
     }
 
-    Dostavka(msg, c, false, ()=>{
+    await Dostavka(msg, c, false, async ()=>{
         if(c.data[msg.chat.id].delivery === 'Да')
-            Time(msg, c, false, ()=>{ 
-                otherCall()
+            await Time(msg, c, false, async ()=>{ 
+                await otherCall()
             })
         else 
-            otherCall()
+            await otherCall()
     })
 
 }

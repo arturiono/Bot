@@ -45,13 +45,13 @@ exports.default = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* (
         user: (0, authorize_1.getLocalPhone)((0, authorize_1.getUserName)(msg)),
         dateCreated: 'Null'
     };
-    (0, toObject_1.default)(msg, c, false, () => {
-        (0, dostavka_1.default)(msg, c, false, () => {
-            (0, dateTime_1.default)(msg, c, false, () => {
-                (0, tools_1.default)(msg, c, false, () => {
-                    (0, rashodniki_1.default)(msg, c, false, true, () => {
-                        (0, comment_1.default)(msg, c, false, () => {
-                            (0, confirm_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, toObject_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, dostavka_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
+            yield (0, dateTime_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
+                yield (0, tools_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
+                    yield (0, rashodniki_1.default)(msg, c, false, true, () => __awaiter(void 0, void 0, void 0, function* () {
+                        yield (0, comment_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
+                            yield (0, confirm_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
                                 yield (0, saveRequest_1.saveRequest)(msg, c);
                                 yield c.botUI.message(msg, TX_REQEST_CONFIRMED);
                                 //пишем менеджеру
@@ -59,10 +59,10 @@ exports.default = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* (
                                 yield (0, notify_1.default)(msg, c, TX_NEW_ZAYAVKA_MNG + (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], true, usersTable), usersTable, null); //пишем менджеру
                                 end();
                             }));
-                        });
-                    });
-                });
-            });
-        });
-    });
+                        }));
+                    }));
+                }));
+            }));
+        }));
+    }));
 });

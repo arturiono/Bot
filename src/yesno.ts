@@ -5,8 +5,6 @@ const TX_BTN_NO = "Нет"
 
 export default async (msg:any, c: MainContext, initialMsg:string, yes:()=>any, no:()=>any) => {
 
-    // console.log('HAPPEN')
-    // console.log(initialMsg)
 
     c.botUI.context(msg, async ()=>{   
 

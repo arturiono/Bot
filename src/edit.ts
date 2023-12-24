@@ -122,53 +122,53 @@ const Edit = async (msg:any, c: MainContext, end:(wasEdited:Boolean)=>any, editi
             await showZayavka()
 
             if(query.data === 'tools') {
-                Tools(msg, c, true, ()=>{
+                await Tools(msg, c, true, async ()=>{
                     // end(true)
-                    Edit(msg, c, end, true)
+                    await Edit(msg, c, end, true)
                 })
             } else if(query.data === 'rashodnniki') {
-                Rashodniki(msg, c, true, true, ()=>{
+                await Rashodniki(msg, c, true, true, async ()=>{
                     // end(true)
-                    Edit(msg, c, end, true)
+                    await Edit(msg, c, end, true)
                 })
             } else if(query.data === 'comment') {
                 await c.botUI.message(msg, TX_ADD_COMMENT) //%%% move inside module
-                Comment(msg, c, true, ()=>{
+                await Comment(msg, c, true, async ()=>{
                     // end(true)
-                    Edit(msg, c, end, true)
+                    await Edit(msg, c, end, true)
                 })
             } else if(query.data === 'time') { 
                 await c.botUI.message(msg, TX_TIME) //%%% move inside module
-                DateTime(msg, c, true, ()=>{
-                    Edit(msg, c, end, true)
+                await DateTime(msg, c, true, async ()=>{
+                    await Edit(msg, c, end, true)
                 })
             } else if(query.data === 'dostavka') {
                 await c.botUI.message(msg, TX_DOSTAVKA) //%%% move inside module
-                Dostavka(msg, c, true, ()=>{
-                    Edit(msg, c, end, true)
+                await Dostavka(msg, c, true, async ()=>{
+                    await Edit(msg, c, end, true)
                 })
             } else if(query.data === 'object_tools') {
                 await c.botUI.message(msg, TX_BUTTON_FROM_OBJECT_TOOLS)
-                FromObjectTools(msg, c, false, ()=>{ //в самое начало выбора объекта
-                    Edit(msg, c, end, true)
+                await FromObjectTools(msg, c, false, async ()=>{ //в самое начало выбора объекта
+                    await Edit(msg, c, end, true)
                 })    
             } else if(query.data === 'from_object_tools') {
                 await c.botUI.message(msg, TX_BUTTON_FROM_OBJECT_TOOLS)
-                FromObjectTools(msg, c, true, ()=>{ //сразу редактируем инсрумент (объект уже выбран)
-                    Edit(msg, c, end, true)
+                await FromObjectTools(msg, c, true, async()=>{ //сразу редактируем инсрумент (объект уже выбран)
+                    await Edit(msg, c, end, true)
                 })
             } else if(query.data === 'object_to') {
                 await c.botUI.message(msg, TX_OBJECT_TO) //%%% move inside module
-                Object(msg, c, true, ()=>{
+                await Object(msg, c, true, async ()=>{
                     // end(true)
-                    Edit(msg, c, end, true)
+                    await Edit(msg, c, end, true)
                 })
             } else if(query.data === 'back') {
                 c.botUI.deleteAllMarked(msg)
-                end(false) 
+                await end(false) 
             } else if(query.data === 'backAndEdit') {
                 if(nmsg) c.botUI.deleteFromMarked(msg, nmsg.message_id) //оставляем последнее сообщение нв ленте
-                end(true)
+                await end(true)
             }
             
         }

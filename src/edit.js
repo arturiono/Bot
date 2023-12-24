@@ -108,63 +108,63 @@ const Edit = (msg, c, end, editingHappen, usersTable) => __awaiter(void 0, void 
             c.botUI.deleteAllMarked(msg);
             yield showZayavka();
             if (query.data === 'tools') {
-                (0, tools_1.default)(msg, c, true, () => {
+                yield (0, tools_1.default)(msg, c, true, () => __awaiter(void 0, void 0, void 0, function* () {
                     // end(true)
-                    Edit(msg, c, end, true);
-                });
+                    yield Edit(msg, c, end, true);
+                }));
             }
             else if (query.data === 'rashodnniki') {
-                (0, rashodniki_1.default)(msg, c, true, true, () => {
+                yield (0, rashodniki_1.default)(msg, c, true, true, () => __awaiter(void 0, void 0, void 0, function* () {
                     // end(true)
-                    Edit(msg, c, end, true);
-                });
+                    yield Edit(msg, c, end, true);
+                }));
             }
             else if (query.data === 'comment') {
                 yield c.botUI.message(msg, TX_ADD_COMMENT); //%%% move inside module
-                (0, comment_1.default)(msg, c, true, () => {
+                yield (0, comment_1.default)(msg, c, true, () => __awaiter(void 0, void 0, void 0, function* () {
                     // end(true)
-                    Edit(msg, c, end, true);
-                });
+                    yield Edit(msg, c, end, true);
+                }));
             }
             else if (query.data === 'time') {
                 yield c.botUI.message(msg, TX_TIME); //%%% move inside module
-                (0, dateTime_1.default)(msg, c, true, () => {
-                    Edit(msg, c, end, true);
-                });
+                yield (0, dateTime_1.default)(msg, c, true, () => __awaiter(void 0, void 0, void 0, function* () {
+                    yield Edit(msg, c, end, true);
+                }));
             }
             else if (query.data === 'dostavka') {
                 yield c.botUI.message(msg, TX_DOSTAVKA); //%%% move inside module
-                (0, dostavka_1.default)(msg, c, true, () => {
-                    Edit(msg, c, end, true);
-                });
+                yield (0, dostavka_1.default)(msg, c, true, () => __awaiter(void 0, void 0, void 0, function* () {
+                    yield Edit(msg, c, end, true);
+                }));
             }
             else if (query.data === 'object_tools') {
                 yield c.botUI.message(msg, TX_BUTTON_FROM_OBJECT_TOOLS);
-                (0, fromObjectTools_1.default)(msg, c, false, () => {
-                    Edit(msg, c, end, true);
-                });
+                yield (0, fromObjectTools_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
+                    yield Edit(msg, c, end, true);
+                }));
             }
             else if (query.data === 'from_object_tools') {
                 yield c.botUI.message(msg, TX_BUTTON_FROM_OBJECT_TOOLS);
-                (0, fromObjectTools_1.default)(msg, c, true, () => {
-                    Edit(msg, c, end, true);
-                });
+                yield (0, fromObjectTools_1.default)(msg, c, true, () => __awaiter(void 0, void 0, void 0, function* () {
+                    yield Edit(msg, c, end, true);
+                }));
             }
             else if (query.data === 'object_to') {
                 yield c.botUI.message(msg, TX_OBJECT_TO); //%%% move inside module
-                (0, toObject_1.default)(msg, c, true, () => {
+                yield (0, toObject_1.default)(msg, c, true, () => __awaiter(void 0, void 0, void 0, function* () {
                     // end(true)
-                    Edit(msg, c, end, true);
-                });
+                    yield Edit(msg, c, end, true);
+                }));
             }
             else if (query.data === 'back') {
                 c.botUI.deleteAllMarked(msg);
-                end(false);
+                yield end(false);
             }
             else if (query.data === 'backAndEdit') {
                 if (nmsg)
                     c.botUI.deleteFromMarked(msg, nmsg.message_id); //оставляем последнее сообщение нв ленте
-                end(true);
+                yield end(true);
             }
         })
     });

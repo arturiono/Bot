@@ -41,7 +41,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
             const SMSG = (query.data === 'self') ? TX_SUCESS_SELF : TX_SUCESS_DELIVERY
             await c.botUI.message(msg, SMSG)
             
-            end() 
+            await end() 
         }
     })
 }

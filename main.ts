@@ -7,6 +7,9 @@ import {MainContext, Data} from './types/types'
 import BotUI from './lib/bot-ui'
 const TableUI = require('./lib/table-ui')
 
+const process = require('node:process');
+const fs = require('fs')
+
 // import Zayavka from './src/zayavkaView'
 
 // Сценарии 
@@ -56,10 +59,28 @@ let tableUI = new TableUI(SHEET_ID, TABLE_MODEL)
 const data:Data = {}
 const c:MainContext  = {botUI, tableUI, data}
 
+// ловит все ошибк, чтобы скрипт продолжал работать
+// сохраняет все оишбки в trycatch.log'
+let tryCatch = async (msg:any, func:any)=>{
+    try {
+        await func()
+    } catch (e) {
+        fs.writeSync(
+            process.stderr.fd,
+            `Caught exception: ${e}\n`, (err:any)=>{}
+        )
+        fs.writeFile('trycatch.log',
+            `Time: ${new Date().toString()}\n` +
+            `Caught exception: ${e}\n`, { flag: 'a+' }, (err:any)=>{}
+        )
+
+        botUI.message(msg, '*Произошла неизвестная ошибка!* Попробуйте заново воспользоватся меню')
+    }
+}
+
 botUI.commands({
 
     // test: async (msg: any) => {
-
     //     // Создание заявки 'Со склада'
     //     c.data[msg.chat.id] = {
     //         id: 'Null',
@@ -75,101 +96,117 @@ botUI.commands({
     //         user: '79215987335',
     //         dateCreated: 'Null'
     //     }
-
     //     saveRequest(msg, c)        
-
     // },
 
     start: async (msg: any) => {
-
-        botUI.deleteAllMarked(msg)
-        botUI.message(msg, TX_WELLCOME_MESSAGE)
-        Authorize(msg, c)
-
-        // const data:ABReqest = {}
-        // const c = {botUI, tableUI, data}
-        // updateToolsByStatus(c, 'Отмена', '16')
-        // updateRashodnikiByType(c, 'Отмена', '18')
-             
+        await tryCatch(msg, async ()=>{
+            await botUI.deleteAllMarked(msg)
+            await botUI.message(msg, TX_WELLCOME_MESSAGE)
+            await Authorize(msg, c)
+        })
     },
 
     zayavka: async (msg:any) => {
- 
-        botUI.deleteAllMarked(msg)
-        if(Authorize(msg, c)) {           
-            Zayavka(msg, c, async ()=>{
-                // console.log(data)
-            }) 
-        }
+        await tryCatch(msg, async ()=>{
+            await botUI.deleteAllMarked(msg)
+            if(Authorize(msg, c)) {           
+                await Zayavka(msg, c, async ()=>{
+                    // console.log(data)
+                }) 
+            }
+        })
     },
 
     moizayavki: async (msg:any) => {
-        
-        botUI.deleteAllMarked(msg) 
-        if(Authorize(msg, c)){
-            MoiZayavki(msg, c, 1, ()=>{
-                // console.log('ended')
-            }, true)
-        }
+        await tryCatch(msg, async ()=>{
+            await botUI.deleteAllMarked(msg) 
+            if(Authorize(msg, c)){
+                await MoiZayavki(msg, c, 1, ()=>{
+                    // console.log('ended')
+                }, true)
+            }
+        })
     },
 
     namne: async (msg:any) => {
-
-        botUI.deleteAllMarked(msg)
-        if(Authorize(msg, c)){
-            NaMne(msg, c, ()=>{
-                // console.log('ended NaMne')
-            })
-        }
+        await tryCatch(msg, async ()=>{
+            await botUI.deleteAllMarked(msg)
+            if(Authorize(msg, c)){
+                await NaMne(msg, c, ()=>{
+                    // console.log('ended NaMne')
+                })
+            } 
+        })
     },
 
     vozvrat: async (msg:any) => {
-
-        botUI.deleteAllMarked(msg)
-        if(Authorize(msg, c)) {           
-            Vozvrat(msg, c, async ()=>{
-                // console.log(data)
-            }) 
-        }
+        await tryCatch(msg, async ()=>{
+            await botUI.deleteAllMarked(msg)
+            if(Authorize(msg, c)) {           
+                await Vozvrat(msg, c, async ()=>{
+                    // console.log(data)
+                }) 
+            }
+        })
     },
 
     megduobj: async (msg:any) => {
-
-        botUI.deleteAllMarked(msg)
-        if(Authorize(msg, c)) {           
-            MegduObj(msg, c, async ()=>{
-                // console.log(data)
-            }) 
-        }
+        await tryCatch(msg, async ()=>{
+            await botUI.deleteAllMarked(msg)
+            if(Authorize(msg, c)) {           
+                await MegduObj(msg, c, async ()=>{
+                    // console.log(data)
+                }) 
+            }
+        })
     },
 
     freezayavka: async (msg:any) => {
-
-        botUI.deleteAllMarked(msg)
-        if(Authorize(msg, c)) {           
-            Svobodnaya(msg, c, async ()=>{
-                // console.log(data)
-            }) 
-        }
+        await tryCatch(msg, async ()=>{
+            await botUI.deleteAllMarked(msg)
+            if(Authorize(msg, c)) {           
+                await Svobodnaya(msg, c, async ()=>{
+                    // console.log(data)
+                }) 
+            }
+        })
     },
 
     mng: async (msg:any) => {
-
-        c.botUI.deleteAllMarked(msg)
-        if(Authorize(msg, c, true)){
-            Manager(msg, c, ()=>{
-                // console.log('ended')
-            }, true)
-        }
+        await tryCatch(msg, async ()=>{
+            await c.botUI.deleteAllMarked(msg)
+            if(Authorize(msg, c, true)){
+                await Manager(msg, c, ()=>{
+                    // console.log('ended')
+                }, true)
+            }
+        })
     },
 
 })
 
-// async function run() {
-//     let obj = await tableUI.getList('Обьекты',['#', 'Название'])
-//     console.log(obj)
-// }
-// run()
+// promise
+// process.on('uncaughtExceptionMonitor', (err:any, origin:any) => {
+    
+//     // console.log('HAPPEN')
+//     // console.log(err)
+//     // console.log(origin)
+//     // console.log('===========')
+    
+//     fs.writeSync(
+//         process.stderr.fd,
+//         `Caught exception: ${err}\n` +
+//         `Exception origin: ${origin}`,
+//     )
+
+//     fs.writeFile('exception-monitor.log',
+//         `Time: ${new Date().toString()}\n` +
+//         `Caught exception: ${err}\n` +
+//         `Exception origin: ${origin}\n`, { flag: 'a+' }, (err:any)=>{}
+//     )
+     
+// })
 
 // - - -
 

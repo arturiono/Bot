@@ -39,9 +39,9 @@ exports.default = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* (
         user: (0, authorize_1.getLocalPhone)((0, authorize_1.getUserName)(msg)),
         dateCreated: 'Null'
     };
-    let otherCall = () => {
-        (0, comment_1.default)(msg, c, false, () => {
-            (0, confirm_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
+    let otherCall = () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, comment_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
+            yield (0, confirm_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
                 yield (0, saveRequest_1.saveRequest)(msg, c);
                 yield c.botUI.message(msg, TX_REQEST_CONFIRMED);
                 // пишем менеджеру
@@ -50,14 +50,14 @@ exports.default = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* (
                     (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], true, usersTable), usersTable, null); //пишем менджеру
                 end();
             }));
-        });
-    };
-    (0, dostavka_1.default)(msg, c, false, () => {
-        if (c.data[msg.chat.id].delivery === 'Да')
-            (0, dateTime_1.default)(msg, c, false, () => {
-                otherCall();
-            });
-        else
-            otherCall();
+        }));
     });
+    yield (0, dostavka_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
+        if (c.data[msg.chat.id].delivery === 'Да')
+            yield (0, dateTime_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
+                yield otherCall();
+            }));
+        else
+            yield otherCall();
+    }));
 });

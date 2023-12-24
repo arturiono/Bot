@@ -44,14 +44,14 @@ export default class BotUI {
     }
 
     commands (obj:any) { //user, 
-        Object.keys(obj).forEach(key => {
-                this.bot.onText(new RegExp(`\/${key}`), (msg:any)=>{
+        Object.keys(obj).forEach(async key => {
+                this.bot.onText(new RegExp(`\/${key}`), async (msg:any)=>{
                     // this.lastMessage = msg
                     // this.chatId = msg.chat.id //сохраняем каждый раз
-                    obj[key].call(null, msg)
+                    await obj[key](msg)
                 })
         })
-        
+         
     }
 
     // создаёт новый контекст для перехвата ответов

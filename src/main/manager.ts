@@ -82,7 +82,7 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean
 
     c.botUI.context(msg, async ()=>{
 
-        c.botUI.deleteAllMarked(msg)
+        await c.botUI.deleteAllMarked(msg)
 
         let found = false
         for (const [i, phone] of zayavkiTable['Cотрудник'].entries()) {
@@ -144,7 +144,7 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean
                 // - вернутся
                 // - 
 
-                Edit(msg, c, async (isEdited:Boolean)=>{
+                await Edit(msg, c, async (isEdited:Boolean)=>{
 
                     if(isEdited) {
                         await saveRequest(msg, c, id)
@@ -155,7 +155,7 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean
                             + dataToMessage(c.data[msg.chat.id]), usersTable, c.data[msg.chat.id].user) //пишем мастеру
                     } else {
                         // console.log('ВЕРНУТЬСЯ HAPPEN')
-                        Manager(msg, c, end) 
+                        await Manager(msg, c, end) 
                     }
 
                 }, false, usersTable) // запускаем сценарий confirmation сразу с редактирования
@@ -287,7 +287,7 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean
                         if(type === 'back') {
                             
                             c.botUI.deleteAllMarked(msg)
-                            Manager(msg, c, end)
+                            await Manager(msg, c, end)
 
                             // const STATUS_OBRABOTKA = "Обработка"
                             // const STATUS_SOBRAN = "Собран"
@@ -324,10 +324,10 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean
                                 c.data[msg.chat.id] = zayavkaToData(ind, zayavkiTable)
                                 await c.botUI.message(msg, dataToMessage(c.data[msg.chat.id], true, usersTable), {mark_to_remove: true})
 
-                                YesNo(msg, c, TX_CONFIRN_OBJ, async ()=>{
+                                await YesNo(msg, c, TX_CONFIRN_OBJ, async ()=>{
                                     await save()
                                 }, async ()=>{
-                                    Manager(msg, c, end)
+                                    await Manager(msg, c, end)
                                 })
 
                             } else {

@@ -28,7 +28,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
             c.data[msg.chat.id].comment = msg.text
             c.botUI.delete(msg, msdDelID)
             await c.botUI.message(msg, TX_NO_SUCCESS_MESSAGE)
-            end()
+            await end()
         },
         callback_query:
         async (query:any)=>{
@@ -36,7 +36,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                 c.data[msg.chat.id].comment = 'Null'
                 c.botUI.delete(msg, msdDelID)
                 await c.botUI.message(msg, TX_NO_SKIP_MESSAGE)
-                end()
+                await end()
             }
         }
     })

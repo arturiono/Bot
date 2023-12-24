@@ -32,14 +32,14 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
             c.data[msg.chat.id].comment = msg.text;
             c.botUI.delete(msg, msdDelID);
             yield c.botUI.message(msg, TX_NO_SUCCESS_MESSAGE);
-            end();
+            yield end();
         }),
         callback_query: (query) => __awaiter(void 0, void 0, void 0, function* () {
             if (query.data === 'skip') { //Skip
                 c.data[msg.chat.id].comment = 'Null';
                 c.botUI.delete(msg, msdDelID);
                 yield c.botUI.message(msg, TX_NO_SKIP_MESSAGE);
-                end();
+                yield end();
             }
         })
     });

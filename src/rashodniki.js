@@ -115,11 +115,11 @@ let MRashodniki = (msg, c, editMode, showInitialMessage, end) => __awaiter(void 
             showRashodnikMessage(id, true, true);
         }
         addedRashodnikiMsgIds[msg.chat.id] = undefined; //сбрасываем глобальную переменную
-        end();
+        yield end();
     });
     const endRashodnikiConfirmed = () => __awaiter(void 0, void 0, void 0, function* () {
         yield c.botUI.message(msg, TX_END_CONFIRMED);
-        endRashodniki();
+        yield endRashodniki();
     });
     const endRashodnikiNotConfirmed = () => __awaiter(void 0, void 0, void 0, function* () {
         // удалить сообщение и продолжить

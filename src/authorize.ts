@@ -37,7 +37,6 @@ export default (msg:any, c: MainContext, checkManager?:Boolean) => {
     let username:String = getUserName(msg)
 
     // console.log(name)
-
     let res = null
     let manager = null
 

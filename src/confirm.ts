@@ -8,13 +8,13 @@ const TX_BUTTON_NOT_CONFIRM = "Редактировать"
 
 //confirm включает в себя edit (наужна рекурсия)
 const Confirm = async (msg:any, c: MainContext, end:()=>any) => {
-    const editNow = ()=>{
+    const editNow = async ()=>{
         // для Confirm сценариев не важно было редактирование или нет
-        Edit(msg, c, (isEdited:Boolean)=>{
+        await Edit(msg, c, async (isEdited:Boolean)=>{
             if(isEdited)
-                end()
+                await end()
             else    
-                Confirm(msg, c, end)
+                await Confirm(msg, c, end)
         }, false)
     }
 
@@ -44,11 +44,11 @@ const Confirm = async (msg:any, c: MainContext, end:()=>any) => {
 
                 c.botUI.deleteFromMarked(msg, nmsg.message_id) //оставляем последнее сообщение нв ленте
                 c.botUI.deleteAllMarked(msg)
-                end()
+                await end()
 
             } else { 
                 c.botUI.deleteAllMarked(msg);
-                editNow()
+                await editNow()
             }
         }
     })

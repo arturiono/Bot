@@ -19,15 +19,15 @@ const TX_BUTTON_CONFIRM = "Подтвердить";
 const TX_BUTTON_NOT_CONFIRM = "Редактировать";
 //confirm включает в себя edit (наужна рекурсия)
 const Confirm = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* () {
-    const editNow = () => {
+    const editNow = () => __awaiter(void 0, void 0, void 0, function* () {
         // для Confirm сценариев не важно было редактирование или нет
-        (0, edit_1.default)(msg, c, (isEdited) => {
+        yield (0, edit_1.default)(msg, c, (isEdited) => __awaiter(void 0, void 0, void 0, function* () {
             if (isEdited)
-                end();
+                yield end();
             else
-                Confirm(msg, c, end);
-        }, false);
-    };
+                yield Confirm(msg, c, end);
+        }), false);
+    });
     c.botUI.deleteAllMarked(msg);
     const nmsg = yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id]), { mark_to_remove: true });
     c.botUI.context(msg, () => __awaiter(void 0, void 0, void 0, function* () {
@@ -49,11 +49,11 @@ const Confirm = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* () 
             if (query.data === 'confirmed') {
                 c.botUI.deleteFromMarked(msg, nmsg.message_id); //оставляем последнее сообщение нв ленте
                 c.botUI.deleteAllMarked(msg);
-                end();
+                yield end();
             }
             else {
                 c.botUI.deleteAllMarked(msg);
-                editNow();
+                yield editNow();
             }
         })
     });
