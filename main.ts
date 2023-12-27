@@ -24,11 +24,6 @@ import Manager from './src/main/manager'
 
 const TX_WELLCOME_MESSAGE = "Привет! Я бот компании Naptech. *Используй меню /* для работы со мной."
 
-// Типы
-import { ABReqest } from './types/types';
-import { saveRequest } from './src/common/saveRequest'
-import vozvrat from './src/main/vozvrat'
-
 const SHEET_ID = '16Z6opmCk2VnXFHraYIqdGhOTT_MJtQwIRHe3KPhNys0'
 const BOTTOKEN = "6287688949:AAFalubhPUjnzkiSBb3ESxnogmlOpqpQXgc"
 const OPT = {
@@ -53,13 +48,10 @@ const TABLE_MODEL =  {
 let botUI = new BotUI(BOTTOKEN, OPT, EVENTS)
 let tableUI = new TableUI(SHEET_ID, TABLE_MODEL)
 
-// TESTS
-// tableUI.updateRow('Сотрудники', 2, {'Username': 'vasya', 'ChatId': '1256758'})
-
 const data:Data = {}
 const c:MainContext  = {botUI, tableUI, data}
 
-// ловит все ошибк, чтобы скрипт продолжал работать
+// ловит все ошибки, чтобы скрипт продолжал работать
 // сохраняет все оишбки в trycatch.log'
 let tryCatch = async (msg:any, func:any)=>{
     try {
@@ -74,7 +66,7 @@ let tryCatch = async (msg:any, func:any)=>{
             `Caught exception: ${e}\n`, { flag: 'a+' }, (err:any)=>{}
         )
 
-        botUI.message(msg, '*Произошла неизвестная ошибка!* Попробуйте заново воспользоватся меню')
+        botUI.message(msg, '*Произошла неизвестная ошибка!* Попробуй заново воспользоватся меню')
     }
 }
 

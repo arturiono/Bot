@@ -109,17 +109,18 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
             c.botUI.markToDelete(msg, msg.message_id); //добавляем для будущего удалению сообщение пользователя
             const searchRes = yield (0, search_1.SearchToolsByStr)(c, msg.text);
             if (searchRes.length) {
-                yield c.botUI.message(msg, TX_FOUND_1 + searchRes.length + TX_FOUND_2 + SEARCH_LIMIT + TX_FOUND_3, { mark_to_remove: true });
                 let cur_i = 0;
                 for (let i = 0; i < searchRes.length; i++) {
                     const o = searchRes[i];
                     if (cur_i >= SEARCH_LIMIT)
                         return;
                     // показываем только те, которые не добавлены
-                    if (addedTools && !addedTools[String(o.id)])
+                    if (addedTools && !addedTools[String(o.id)]) {
                         yield showFoundedTool(o.id, o.name, o.desc, o.url);
-                    cur_i++;
+                        cur_i++;
+                    }
                 }
+                yield c.botUI.message(msg, TX_FOUND_1 + cur_i + TX_FOUND_2 + SEARCH_LIMIT + TX_FOUND_3, { mark_to_remove: true });
             }
             else {
                 yield c.botUI.message(msg, TX_SEARCH_NORESULT, { mark_to_remove: true });

@@ -14,13 +14,12 @@ import Rashodniki from '../rashodniki'
 import Notify from '../common/notify'
 import {saveRequest} from '../common/saveRequest'
 
-// 🏠🔙 
-// 🔜🏢
-// 🏩🔜🏢
-
 const TX_NEW_ZAYAVKA_MNG = "✅ 🔜🏢 Поступила заявка получения со склада:\n" 
 const TX_REQEST_CONFIRMED = "✅ *Заявка получения со склада принята*. Информация о готовности будет поступать в этот чат.\nдля управления зявками используйте раздел меню /moizayavki";
 const TX_INITIAL_MESSAGE = "*Заявка получения со склада*"
+
+const TX_CONFLICT = "*❗️Произошел конфликт заказа*. Другой сотрудник уже заказал выбранный вами инструемент. \n" + 
+                    "*Инструмент и/или расходники были изменены*. Внимательно посмотртите на изменения в заказе."
 
 export default async (msg:any, c: MainContext, end:()=>any) => {
 
@@ -34,11 +33,89 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
         status: 'Обработка',
         delivery: 'Нет',
         dateTime: 'По готовности',
-        tools: {},
-        rashodniki: {},
+        tools: {}, //{"2":"СПЕЦ-3447","3":"BORT BNG-2000X"}
+        rashodniki: {}, //{"1":{"name":"Лезвия | Прямы е","count":100}, "2":{"name":"Лезвия | Лезвия Крючок","count":100}}
         comment: 'Null',
         user: getLocalPhone(getUserName(msg)),
         dateCreated: 'Null' 
+    }
+
+    // Конечная функция с рекурсией выделена в компонент
+    let  ConfirmedByUser = async ()=> {
+
+        // 1. проверяем tools, чтобы их не забронировал кто-то другой
+        const toolsData = await c.tableUI.getList('Инструмент', 
+        ['Auto #', 'Статус' , 'Наименование', 'Описание', 'Объект', 'Местонахождение', 'Ответсвенный', 'Сотрудник', 'Заявка'])
+        
+        let conflicted = false
+        for (const toolId in c.data[msg.chat.id].tools) {
+
+            const ind = toolsData['Auto #'].indexOf(toolId)
+            if(toolsData['Статус'][ind] !== 'Склад') {
+                let tx = '⛔️' + toolsData['Наименование'][ind] + ' | ' + toolsData['Описание'][ind] + '\n' +
+                'Уже заброниравал: ' + toolsData['Ответсвенный'][ind]
+
+                await c.botUI.message(msg, tx)
+                conflicted = true
+
+                // удаляем из списка
+                delete c.data[msg.chat.id].tools[toolId]
+            }
+
+        }
+
+        // 2. проверяем rashodniki, чтобы их не забронировал кто-то другой
+        const rashodniki = await c.tableUI.getList('Расходники', 
+        ['Auto #', 'Количество', 'Измерение', 'Категория' ,'Название', 'Вариант', 'Фото', 'Место'])
+
+        for (const toolId in c.data[msg.chat.id].rashodniki) {
+            const ind = rashodniki['Auto #'].indexOf(toolId)
+
+            if(ind!== -1 && rashodniki['Количество'][ind]){
+                const a = Number(rashodniki['Количество'][ind])
+                const b = c.data[msg.chat.id].rashodniki[toolId].count
+                const dif = a - b
+                if( dif < 0 ) {
+                    let tx = '⛔️' + rashodniki['Название'][ind] + ' | ' + rashodniki['Вариант'][ind] + '\n' +
+                    'Максимаольно доступно: ' + a + rashodniki['Измерение'][ind]
+                    await c.botUI.message(msg, tx)
+
+                    const newCount = c.data[msg.chat.id].rashodniki[toolId].count + dif
+                    c.data[msg.chat.id].rashodniki[toolId].count = newCount //минимальное значение - 0
+                    if(newCount === 0) {
+                        delete c.data[msg.chat.id].rashodniki[toolId]
+                    }
+
+                    conflicted = true
+                }
+            }
+            
+        }
+
+        if (conflicted) {
+            await c.botUI.message(msg, TX_CONFLICT) 
+
+            // снова показываем confirmed и рекурсивно вызывает эту функцию
+            await Confirm(msg, c, async ()=>{ 
+                ConfirmedByUser()
+            }) 
+
+            return
+        } 
+
+        // - - - - - - - - - - - - - - -
+        // Есоли все отлично
+
+        await saveRequest(msg, c)
+        await c.botUI.message(msg, TX_REQEST_CONFIRMED)
+
+        // пишем менеджеру
+        const usersTable = await c.tableUI.getList('Сотрудники', ['#', 'ФИО', 'Роль', 'ChatId'])
+        
+        await Notify(msg, c,
+            TX_NEW_ZAYAVKA_MNG + dataToMessage(c.data[msg.chat.id], true, usersTable), usersTable, 
+            null) //пишем менджеру
+        end()
     }
 
     await Object(msg, c, false, async ()=>{
@@ -48,17 +125,7 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
                     await Rashodniki(msg, c, false, true, async ()=>{
                         await Comment(msg, c, false, async ()=>{  
                             await Confirm(msg, c, async ()=>{ 
-
-                                await saveRequest(msg, c)
-                                await c.botUI.message(msg, TX_REQEST_CONFIRMED)
-
-                                //пишем менеджеру
-                                const usersTable = await c.tableUI.getList('Сотрудники', ['#', 'ФИО', 'Роль', 'ChatId'])
-                                
-                                await Notify(msg, c,
-                                    TX_NEW_ZAYAVKA_MNG + dataToMessage(c.data[msg.chat.id], true, usersTable), usersTable, 
-                                    null) //пишем менджеру
-                                end()
+                                ConfirmedByUser()
                             }) 
                         })
                     })

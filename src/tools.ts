@@ -127,7 +127,6 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
             const searchRes = await SearchToolsByStr(c, msg.text)
 
             if (searchRes.length) {
-                await c.botUI.message(msg, TX_FOUND_1 + searchRes.length + TX_FOUND_2 + SEARCH_LIMIT + TX_FOUND_3, {mark_to_remove: true})
                 
                 let cur_i = 0
                 for (let i = 0; i < searchRes.length; i++) {
@@ -136,11 +135,14 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                     if (cur_i >= SEARCH_LIMIT) return 
 
                     // показываем только те, которые не добавлены
-                    if (addedTools && !addedTools[String(o.id)])
+                    if (addedTools && !addedTools[String(o.id)]) {
                         await showFoundedTool(o.id, o.name, o.desc, o.url)
-                    cur_i ++
+                        cur_i ++
+                    }
                     
                 }
+
+                await c.botUI.message(msg, TX_FOUND_1 + cur_i + TX_FOUND_2 + SEARCH_LIMIT + TX_FOUND_3, {mark_to_remove: true})
 
             } else {
                 await c.botUI.message(msg, TX_SEARCH_NORESULT, { mark_to_remove: true })

@@ -14,18 +14,22 @@ function dataToMessage(data, showName, usersTable) {
         str += name + ' (' + data.user + ')' + '\n';
         str += ' - - - ' + '\n';
     }
+    // специальная иконка для статуса Отмена    
+    const sticon = data.status === 'Отмена' ? '⛔️' :
+        data.status === 'Склад' ? '✅' :
+            data.status === 'Объект' ? '✅' :
+                data.status === 'Собран' ? '✅' :
+                    data.status === 'Доставка' ? '🚙' : '⏱️';
     if (data.id !== 'Null')
         str += '# ' + data.id + '\n';
-    // специальная иконка для статуса Отмена    
-    const sticon = data.status === 'Отмена' ? '⛔️' : '🚀';
-    str += 'Тип: *' + data.type + '*\n';
     str += 'Статус: ' + sticon + ' *' + data.status + '*\n';
+    str += 'Тип: *' + data.type + '*\n';
     str += 'Доставка: *' + data.delivery + '*\n';
     str += 'Дата и время: *' + data.dateTime + '*\n';
     if (data.type !== 'Свободная') {
         // %%% получить назание объекта
-        const from = data.from === 0 ? 'Склад' : data.from;
-        const to = data.to === 0 ? 'Склад' : data.to;
+        const from = data.from === '0' ? 'Склад' : data.from;
+        const to = data.to === '0' ? 'Склад' : data.to;
         str += 'Точка А: *' + from + '*\n';
         str += 'Точка B: *' + to + '*\n';
         if (Object.values(data.tools).length !== 0)

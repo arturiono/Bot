@@ -6,3 +6,5 @@ Time: Sun Dec 24 2023 16:20:01 GMT+0300 (Москва, стандартное в
 Caught exception: TypeError: sheets.spreadsheets.values.batchGet2 is not a function
 Time: Sun Dec 24 2023 16:33:57 GMT+0300 (Москва, стандартное время)
 Caught exception: TypeError: sheets.spreadsheets.values.batchGet2 is not a function
+Time: Sun Dec 24 2023 17:33:34 GMT+0300 (Москва, стандартное время)
+Caught exception: Error: Invalid value at 'major_dimension' (type.googleapis.com/google.apps.sheets.v4.Dimension), "COLUMNSError"

@@ -35,8 +35,8 @@ exports.default = (msg, c, editTools, end) => __awaiter(void 0, void 0, void 0, 
     let found = false;
     for (const [i, dataUser] of toolsData['Сотрудник'].entries()) {
         if (dataUser === user &&
-            toolsData['Статус'][i] !== 'Склад' //показывае и заявкку и на объекте
-        ) {
+            toolsData['Статус'][i] !== 'Склад' && //показывае и заявкку и на объекте
+            toolsData['Статус'][i] !== 'Заявка') {
             const objectID = toolsData['Объект'][i];
             if (toolsOrderedByObject[objectID] === undefined)
                 toolsOrderedByObject[objectID] = [];

@@ -1,4 +1,3 @@
-
 {
   "name": "bot",
   "version": "1.0.0",
@@ -7,6 +6,7 @@
   "scripts": {
     "typescript": "tsc -w",
     "watch node": "node --watch main.js",
+    "forever": "forever main.js",
     "node log errors": "node > bot_log.log 2 > bot_err.log"
   },
   "author": "",

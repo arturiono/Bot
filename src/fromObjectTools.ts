@@ -34,7 +34,8 @@ export default async (msg:any, c: MainContext, editTools:boolean, end:()=>any) =
     let found = false
     for (const [i, dataUser] of toolsData['Сотрудник'].entries()) {
         if(dataUser === user && 
-            toolsData['Статус'][i] !== 'Склад' //показывае и заявкку и на объекте
+            toolsData['Статус'][i] !== 'Склад' && //показывае и заявкку и на объекте
+            toolsData['Статус'][i] !== 'Заявка'
             ) {
 
             const objectID = toolsData['Объект'][i]

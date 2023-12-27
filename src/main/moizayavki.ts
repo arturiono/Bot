@@ -21,7 +21,7 @@ const TX_CONFIRN = "Точно отменяем заявку?"
 const TX_BTN_YES = "Да"
 const TX_BTN_NO = "Нет"
 
-const COUNT_PER_PAGE = 2
+const COUNT_PER_PAGE = 3
 const TX_BTN_NEXT_PAGE = "Страница"
 const TX_BTN_PREV_PAGE = "Страница"
 

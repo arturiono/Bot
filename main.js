@@ -51,11 +51,9 @@ const TABLE_MODEL = {
 };
 let botUI = new bot_ui_1.default(BOTTOKEN, OPT, EVENTS);
 let tableUI = new TableUI(SHEET_ID, TABLE_MODEL);
-// TESTS
-// tableUI.updateRow('Сотрудники', 2, {'Username': 'vasya', 'ChatId': '1256758'})
 const data = {};
 const c = { botUI, tableUI, data };
-// ловит все ошибк, чтобы скрипт продолжал работать
+// ловит все ошибки, чтобы скрипт продолжал работать
 // сохраняет все оишбки в trycatch.log'
 let tryCatch = (msg, func) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -65,7 +63,7 @@ let tryCatch = (msg, func) => __awaiter(void 0, void 0, void 0, function* () {
         fs.writeSync(process.stderr.fd, `Caught exception: ${e}\n`, (err) => { });
         fs.writeFile('trycatch.log', `Time: ${new Date().toString()}\n` +
             `Caught exception: ${e}\n`, { flag: 'a+' }, (err) => { });
-        botUI.message(msg, '*Произошла неизвестная ошибка!* Попробуйте заново воспользоватся меню');
+        botUI.message(msg, '*Произошла неизвестная ошибка!* Попробуй заново воспользоватся меню');
     }
 });
 botUI.commands({
