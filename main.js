@@ -95,7 +95,7 @@ botUI.commands({
     zayavka: (msg) => __awaiter(void 0, void 0, void 0, function* () {
         yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
             yield botUI.deleteAllMarked(msg);
-            if ((0, authorize_1.default)(msg, c)) {
+            if (yield (0, authorize_1.default)(msg, c)) {
                 yield (0, zayavka_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
                     // console.log(data)
                 }));
@@ -105,17 +105,17 @@ botUI.commands({
     moizayavki: (msg) => __awaiter(void 0, void 0, void 0, function* () {
         yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
             yield botUI.deleteAllMarked(msg);
-            if ((0, authorize_1.default)(msg, c)) {
+            if (yield (0, authorize_1.default)(msg, c)) {
                 yield (0, moizayavki_1.default)(msg, c, 1, () => {
                     // console.log('ended')
-                }, true);
+                });
             }
         }));
     }),
     namne: (msg) => __awaiter(void 0, void 0, void 0, function* () {
         yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
             yield botUI.deleteAllMarked(msg);
-            if ((0, authorize_1.default)(msg, c)) {
+            if (yield (0, authorize_1.default)(msg, c)) {
                 yield (0, namne_1.default)(msg, c, () => {
                     // console.log('ended NaMne')
                 });
@@ -125,7 +125,7 @@ botUI.commands({
     vozvrat: (msg) => __awaiter(void 0, void 0, void 0, function* () {
         yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
             yield botUI.deleteAllMarked(msg);
-            if ((0, authorize_1.default)(msg, c)) {
+            if (yield (0, authorize_1.default)(msg, c)) {
                 yield (0, vozvrat_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
                     // console.log(data)
                 }));
@@ -135,7 +135,7 @@ botUI.commands({
     megduobj: (msg) => __awaiter(void 0, void 0, void 0, function* () {
         yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
             yield botUI.deleteAllMarked(msg);
-            if ((0, authorize_1.default)(msg, c)) {
+            if (yield (0, authorize_1.default)(msg, c)) {
                 yield (0, megduobj_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
                     // console.log(data)
                 }));
@@ -145,7 +145,7 @@ botUI.commands({
     freezayavka: (msg) => __awaiter(void 0, void 0, void 0, function* () {
         yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
             yield botUI.deleteAllMarked(msg);
-            if ((0, authorize_1.default)(msg, c)) {
+            if (yield (0, authorize_1.default)(msg, c)) {
                 yield (0, svobodnaya_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
                     // console.log(data)
                 }));
@@ -155,10 +155,10 @@ botUI.commands({
     mng: (msg) => __awaiter(void 0, void 0, void 0, function* () {
         yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
             yield c.botUI.deleteAllMarked(msg);
-            if ((0, authorize_1.default)(msg, c, true)) {
+            if (yield (0, authorize_1.default)(msg, c, true)) {
                 yield (0, manager_1.default)(msg, c, () => {
                     // console.log('ended')
-                }, true);
+                });
             }
         }));
     }),

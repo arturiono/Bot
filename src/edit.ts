@@ -29,19 +29,22 @@ const TX_BUTTON_INSTRUMENT = "Инсрумент"
 const TX_BUTTON_RASHODNIKI = "Расходные материалы"
 const TX_BUTTON_COMMENT = "Комментарий"
 
-const TX_NAVIGATION = "Сохранение"
-const TX_SAVE = "Подтвердить"
+const TX_NAVIGATION = "Навигация"
 const TX_BUTTON_BACK = "Вернуться"
-const TX_BUTTON_SAVE = "Сохранить"
+
+const TX_SAVE = "Сохранение"
+const TX_BUTTON_SAVE = "Подтвердить"
 
 // предлагаем пользователю вернутся в сценарии редактирования
 
 const Edit = async (msg:any, c: MainContext, end:(wasEdited:Boolean)=>any, editingHappen:Boolean, usersTable?:any ) => {
 
+    const objectsTable = await c.tableUI.getList('Обьекты', ['Auto #', 'Название'])
+
     let nmsg:any
     let showZayavka = async ()=> {
         const showName = usersTable? true : false
-        nmsg = await c.botUI.message(msg, dataToMessage(c.data[msg.chat.id], showName, usersTable), 
+        nmsg = await c.botUI.message(msg, dataToMessage(c.data[msg.chat.id], objectsTable, showName, usersTable), 
         {mark_to_remove: true} )
     }
     

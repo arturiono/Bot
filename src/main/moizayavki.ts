@@ -33,18 +33,21 @@ const TX_EDIT_CANCELED = "⛔️ *Заявка отменена*. Отправи
 
 // const TX_INITIAL_MESSAGE = '⌨️ Введите *комментарий для менджера*:'
 // page = 1,2,3 ...
-let zayavkiData: any
 
-const MoiZayavki = async (msg:any, c: MainContext, page: number, end:()=>any, updateData: Boolean = true) => {
+const MoiZayavki = async (msg:any, c: MainContext, page: number, end:()=>any, newZayavkiData?:any) => {
 
-    // console.log(page)
-    if(updateData)
+    const objectsTable = await c.tableUI.getList('Обьекты', ['Auto #', 'Название'])
+
+    // кэшируемые данные
+    let zayavkiData: any
+
+    if(newZayavkiData)
+        zayavkiData = newZayavkiData
+    else 
         zayavkiData = await c.tableUI.getList('Заявки', 
         ['#', 'Тип', 'Доставка', 'Ожидаемая дата/время', 'Статус', 'Cотрудник', 'Объект A', 'Объект B', 
         'Инструмент', 'Расходники', 'Комментарий', 'Дата созд.', 'Дата изм.'])
-    else 
-        if(zayavkiData === undefined)
-            console.log('Ошибка. данные не были ранее закэшированы.')
+  
 
     // реверс порядок для массива
     for(const key in zayavkiData) {
@@ -131,10 +134,10 @@ const MoiZayavki = async (msg:any, c: MainContext, page: number, end:()=>any, up
                     mark_to_remove: true
                 }
 
-                const nmsg = await c.botUI.message(msg, dataToMessage(zayavkaToData(i, zayavkiData)), opts)
+                const nmsg = await c.botUI.message(msg, dataToMessage(zayavkaToData(i, zayavkiData), objectsTable), opts)
                 messagesIds[zayavkiData['#'][i]] = nmsg.message_id
             } else {
-                await c.botUI.message(msg, dataToMessage(zayavkaToData(i, zayavkiData)), {mark_to_remove: true})
+                await c.botUI.message(msg, dataToMessage(zayavkaToData(i, zayavkiData), objectsTable), {mark_to_remove: true})
             }
 
         }
@@ -162,10 +165,10 @@ const MoiZayavki = async (msg:any, c: MainContext, page: number, end:()=>any, up
                         // уведомляем менеджера
                         const usersTable = await c.tableUI.getList('Сотрудники', ['#', 'ФИО', 'Роль', 'ChatId'])
                         await Notify(msg, c, TX_NOTIFY_UPDATE + '\n' 
-                            + dataToMessage(c.data[msg.chat.id], true, usersTable), usersTable, null) 
+                            + dataToMessage(c.data[msg.chat.id], objectsTable, true, usersTable), usersTable, null) 
                         end()
                     } else {
-                        MoiZayavki(msg, c, page, end) 
+                        MoiZayavki(msg, c, page, end, newZayavkiData) 
                     }
                 }, false) // запускаем сценарий confirmation сразу с редактирования
 
@@ -176,7 +179,7 @@ const MoiZayavki = async (msg:any, c: MainContext, page: number, end:()=>any, up
 
                     c.botUI.deleteAllMarked(msg)
                     c.data[msg.chat.id] = zayavkaToData(val2, zayavkiData)
-                    await c.botUI.message(msg, dataToMessage(c.data[msg.chat.id]), {mark_to_remove: true})
+                    await c.botUI.message(msg, dataToMessage(c.data[msg.chat.id], objectsTable), {mark_to_remove: true})
 
                     const opts = {
                         reply_markup: { inline_keyboard: [ 
@@ -211,12 +214,12 @@ const MoiZayavki = async (msg:any, c: MainContext, page: number, end:()=>any, up
                             await saveRequest(msg, c, id, true) //save only status
 
                             zayavkiData['Статус'][ind] = 'Отмена'
-                            await c.botUI.message(msg, dataToMessage(zayavkaToData(ind, zayavkiData)))
+                            await c.botUI.message(msg, dataToMessage(zayavkaToData(ind, zayavkiData), objectsTable))
                             await c.botUI.message(msg, TX_EDIT_CANCELED)
 
                             const usersTable = await c.tableUI.getList('Сотрудники', ['#', 'ФИО', 'Роль', 'ChatId'])
                             await Notify(msg, c, TX_NOTIFY_CANCELED + '\n' 
-                                + dataToMessage(c.data[msg.chat.id]), usersTable, null) //пишем менджеру
+                                + dataToMessage(c.data[msg.chat.id], objectsTable), usersTable, null) //пишем менджеру
 
                             end()
 

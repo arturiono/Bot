@@ -33,23 +33,8 @@ export default async (msg:any, c: MainContext, initialMsg:string, yes:()=>any, n
                 
                 await yes()
 
-                // c.botUI.deleteAllMarked(msg)
-
-                // c.data[msg.chat.id].status = 'Отмена'
-                // await saveRequest(msg, c, id, true) //save only status
-                
-                // zayavkiTable['Статус'][ind] = 'Отмена'
-                // await c.botUI.message(msg, dataToMessage(zayavkaToData(ind, zayavkiTable), true, usersTable))
-                // await c.botUI.message(msg, TX_EDIT_CANCELED)
-                
-                // //пишем мастеру
-                // await Notify(msg, c, TX_EDIT_CANCELED_IMFO + '\n' + 
-                //     dataToMessage(c.data[msg.chat.id]), c.data[msg.chat.id].user) 
-                
-
             } else {
-                // c.botUI.deleteAllMarked(msg)
-                // thisIs(msg, c, end)
+
                 await no()
             }                     
         }

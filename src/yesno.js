@@ -31,19 +31,8 @@ exports.default = (msg, c, initialMsg, yes, no) => __awaiter(void 0, void 0, voi
         callback_query: (query) => __awaiter(void 0, void 0, void 0, function* () {
             if (query.data === 'yes') {
                 yield yes();
-                // c.botUI.deleteAllMarked(msg)
-                // c.data[msg.chat.id].status = 'Отмена'
-                // await saveRequest(msg, c, id, true) //save only status
-                // zayavkiTable['Статус'][ind] = 'Отмена'
-                // await c.botUI.message(msg, dataToMessage(zayavkaToData(ind, zayavkiTable), true, usersTable))
-                // await c.botUI.message(msg, TX_EDIT_CANCELED)
-                // //пишем мастеру
-                // await Notify(msg, c, TX_EDIT_CANCELED_IMFO + '\n' + 
-                //     dataToMessage(c.data[msg.chat.id]), c.data[msg.chat.id].user) 
             }
             else {
-                // c.botUI.deleteAllMarked(msg)
-                // thisIs(msg, c, end)
                 yield no();
             }
         })

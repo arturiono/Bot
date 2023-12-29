@@ -25,6 +25,7 @@ const TX_NEW_ZAYAVKA_MNG = "✅ 🏠🔙 Поступила заявка воз�
 const TX_REQEST_CONFIRMED = "✅ *Заявка возрата принята*. Информация о готовности будет поступать в этот чат.\nдля управления зявками используйте раздел меню /moizayavki";
 const TX_INITIAL_MESSAGE = "*Заявка возврата на склад*";
 exports.default = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* () {
+    const objectsTable = yield c.tableUI.getList('Обьекты', ['Auto #', 'Название']);
     yield c.botUI.message(msg, TX_INITIAL_MESSAGE);
     c.data[msg.chat.id] = {
         id: 'Null',
@@ -48,7 +49,7 @@ exports.default = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* (
                 // пишем менеджеру
                 const usersTable = yield c.tableUI.getList('Сотрудники', ['#', 'ФИО', 'Роль', 'ChatId']);
                 yield (0, notify_1.default)(msg, c, TX_NEW_ZAYAVKA_MNG +
-                    (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], true, usersTable), usersTable, null); //пишем менджеру
+                    (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable, true, usersTable), usersTable, null); //пишем менджеру
                 end();
             }));
         }));

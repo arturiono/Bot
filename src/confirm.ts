@@ -19,7 +19,9 @@ const Confirm = async (msg:any, c: MainContext, end:()=>any) => {
     }
 
     c.botUI.deleteAllMarked(msg)
-    const nmsg = await c.botUI.message(msg, dataToMessage(c.data[msg.chat.id]), {mark_to_remove: true} );
+    
+    const objectsTable = await c.tableUI.getList('Обьекты', ['Auto #', 'Название'])
+    const nmsg = await c.botUI.message(msg, dataToMessage(c.data[msg.chat.id], objectsTable), {mark_to_remove: true} );
 
     c.botUI.context(msg, async ()=>{
 

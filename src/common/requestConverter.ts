@@ -1,7 +1,7 @@
 import {MainContext, ABReqest} from '../../types/types'
 
 // usersTable - данные о имени сотрудника
-export function dataToMessage (data:ABReqest, showName?:boolean, usersTable?:any) {
+export function dataToMessage (data:ABReqest, objectTable:any, showName?:boolean, usersTable?:any) {
 
     // %%% Получить 'Обьекты' для вывода названия Обьектов
 
@@ -38,8 +38,13 @@ export function dataToMessage (data:ABReqest, showName?:boolean, usersTable?:any
     if(data.type !== 'Свободная') {
 
         // %%% получить назание объекта
-        const from:String = data.from === '0' ? 'Склад' : data.from 
-        const to:String = data.to === '0' ? 'Склад' : data.to 
+
+        const fromId = objectTable['Auto #'].indexOf(data.from)
+        const from:String = objectTable['Название'][fromId]
+        
+        const toId = objectTable['Auto #'].indexOf(data.to)
+        const to:String = objectTable['Название'][toId]
+        
         str += 'Точка А: *' + from + '*\n'
         str += 'Точка B: *' + to + '*\n'
 

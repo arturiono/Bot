@@ -43,15 +43,18 @@ const TX_EDIT_CANCELED = "⛔️ *Заявка отменена*. Отправи
 const TX_EDIT_CANCELED_IMFO = "⛔️ Твоя *заявка была отменена* менджером:";
 const TX_EDIT_STATUS = "🚀 *Cтатус заявки изменен*. Отправил информацию мастеру";
 const TX_EDIT_STATUS_INFO = "🚀 Cтатус заявки был изменен менджером:";
-// Задачи
-// 1. Показать все авткальные заявки
-// 1.a Знать кто создал заявку
-// const TX_INITIAL_MESSAGE = '⌨️ Введите *комментарий для менджера*:'
-// page = 1,2,3 ...
-let zayavkiTable;
-let usersTable;
-const Manager = (msg, c, end, updateData = true) => __awaiter(void 0, void 0, void 0, function* () {
-    if (updateData) {
+const Manager = (msg, c, end, cashedData) => __awaiter(void 0, void 0, void 0, function* () {
+    let zayavkiTable;
+    let usersTable;
+    let objectsTable;
+    let newCashedData;
+    if (cashedData) {
+        zayavkiTable = cashedData.zayavkiTable;
+        usersTable = cashedData.usersTable;
+        objectsTable = cashedData.objectsTable;
+        newCashedData = cashedData;
+    }
+    else {
         zayavkiTable = yield c.tableUI.getList('Заявки', [
             '#', 'Тип', 'Доставка', 'Ожидаемая дата/время', 'Статус', 'Cотрудник', 'Объект A', 'Объект B',
             'Инструмент', 'Расходники', 'Комментарий', 'Дата созд.', 'Дата изм.'
@@ -59,12 +62,12 @@ const Manager = (msg, c, end, updateData = true) => __awaiter(void 0, void 0, vo
         usersTable = yield c.tableUI.getList('Сотрудники', [
             '#', 'ФИО', 'Роль', 'ChatId'
         ]);
-    }
-    else {
-        if (zayavkiTable === undefined)
-            console.log('Ошибка. Данные zayavkiTable не были ранее закэшированы.');
-        if (usersTable === undefined)
-            console.log('Ошибка. Данные usersTable не были ранее закэшированы.');
+        objectsTable = yield c.tableUI.getList('Обьекты', ['Auto #', 'Название']);
+        newCashedData = {
+            zayavkiTable,
+            usersTable,
+            objectsTable
+        };
     }
     // // реверс порядок для массива
     // for(const key in zayavkiTable) {
@@ -98,7 +101,7 @@ const Manager = (msg, c, end, updateData = true) => __awaiter(void 0, void 0, vo
                     callback_data: 'edit' + '_' + zayavkiTable['#'][i] + '_' + i, //_id_i //индекс
                 });
                 let dt = (0, requestConverter_1.zayavkaToData)(i, zayavkiTable);
-                let zayavka = (0, requestConverter_1.dataToMessage)(dt, true, usersTable);
+                let zayavka = (0, requestConverter_1.dataToMessage)(dt, objectsTable, true, usersTable);
                 const nmsg = yield c.botUI.message(msg, zayavka, opts);
                 messagesIds[zayavkiTable['#'][i]] = nmsg.message_id;
             }
@@ -127,11 +130,11 @@ const Manager = (msg, c, end, updateData = true) => __awaiter(void 0, void 0, vo
                         // уведомляем мастера
                         let usersTable = yield c.tableUI.getList('Сотрудники', ['#', 'Роль', 'ChatId']);
                         yield (0, notify_1.default)(msg, c, TX_EDIT_CONFIRMED_INFO + '\n'
-                            + (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id]), usersTable, c.data[msg.chat.id].user); //пишем мастеру
+                            + (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable), usersTable, c.data[msg.chat.id].user); //пишем мастеру
                     }
                     else {
                         // console.log('ВЕРНУТЬСЯ HAPPEN')
-                        yield Manager(msg, c, end);
+                        yield Manager(msg, c, end, newCashedData);
                     }
                 }), false, usersTable); // запускаем сценарий confirmation сразу с редактирования
             }
@@ -139,7 +142,7 @@ const Manager = (msg, c, end, updateData = true) => __awaiter(void 0, void 0, vo
                 c.botUI.context(msg, () => __awaiter(void 0, void 0, void 0, function* () {
                     c.botUI.deleteAllMarked(msg);
                     c.data[msg.chat.id] = (0, requestConverter_1.zayavkaToData)(ind, zayavkiTable);
-                    yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], true, usersTable), { mark_to_remove: true });
+                    yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable, true, usersTable), { mark_to_remove: true });
                     const opts = {
                         reply_markup: { inline_keyboard: [] }, mark_to_remove: true
                     };
@@ -241,7 +244,7 @@ const Manager = (msg, c, end, updateData = true) => __awaiter(void 0, void 0, vo
                         const ind = split[2];
                         if (type === 'back') {
                             c.botUI.deleteAllMarked(msg);
-                            yield Manager(msg, c, end);
+                            yield Manager(msg, c, end, newCashedData);
                             // const STATUS_OBRABOTKA = "Обработка"
                             // const STATUS_SOBRAN = "Собран"
                             // const STATUS_DOSTAVKA = "Доставка"
@@ -257,21 +260,21 @@ const Manager = (msg, c, end, updateData = true) => __awaiter(void 0, void 0, vo
                                 yield (0, saveRequest_1.saveRequest)(msg, c, id, true); //save only status
                                 // если все хорошо и нет ошибки, то сразу меняем сатус в КЭШ (не спрашиваем у сервера)
                                 zayavkiTable['Статус'][ind] = type;
-                                yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)((0, requestConverter_1.zayavkaToData)(ind, zayavkiTable), true, usersTable));
+                                yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)((0, requestConverter_1.zayavkaToData)(ind, zayavkiTable), objectsTable, true, usersTable));
                                 yield c.botUI.message(msg, TX_EDIT_STATUS);
                                 //пишем мастеру
                                 yield (0, notify_1.default)(msg, c, TX_EDIT_STATUS_INFO + '\n' +
-                                    (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id]), usersTable, c.data[msg.chat.id].user);
+                                    (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable), usersTable, c.data[msg.chat.id].user);
                             });
                             // Возврат на склад и инструмент на объекте - необратимы статусы в текуще реализации
                             if (type === STATUS_OBJ || type === STATUS_SKLAD) {
                                 c.botUI.deleteAllMarked(msg);
                                 c.data[msg.chat.id] = (0, requestConverter_1.zayavkaToData)(ind, zayavkiTable);
-                                yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], true, usersTable), { mark_to_remove: true });
+                                yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable, true, usersTable), { mark_to_remove: true });
                                 yield (0, yesno_1.default)(msg, c, TX_CONFIRN_OBJ, () => __awaiter(void 0, void 0, void 0, function* () {
                                     yield save();
                                 }), () => __awaiter(void 0, void 0, void 0, function* () {
-                                    yield Manager(msg, c, end);
+                                    yield Manager(msg, c, end, newCashedData);
                                 }));
                             }
                             else {
@@ -281,59 +284,21 @@ const Manager = (msg, c, end, updateData = true) => __awaiter(void 0, void 0, vo
                         else if (type === STATUS_CANCEL) {
                             c.botUI.deleteAllMarked(msg);
                             c.data[msg.chat.id] = (0, requestConverter_1.zayavkaToData)(ind, zayavkiTable);
-                            yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], true, usersTable), { mark_to_remove: true });
+                            yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable, true, usersTable), { mark_to_remove: true });
                             yield (0, yesno_1.default)(msg, c, TX_CONFIRN_CANCEL, () => __awaiter(void 0, void 0, void 0, function* () {
                                 c.botUI.deleteAllMarked(msg);
                                 c.data[msg.chat.id].status = 'Отмена';
                                 yield (0, saveRequest_1.saveRequest)(msg, c, id, true); //save only status
                                 zayavkiTable['Статус'][ind] = 'Отмена';
-                                yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)((0, requestConverter_1.zayavkaToData)(ind, zayavkiTable), true, usersTable));
+                                yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)((0, requestConverter_1.zayavkaToData)(ind, zayavkiTable), objectsTable, true, usersTable));
                                 yield c.botUI.message(msg, TX_EDIT_CANCELED);
                                 //пишем мастеру
                                 yield (0, notify_1.default)(msg, c, TX_EDIT_CANCELED_IMFO + '\n' +
-                                    (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id]), usersTable, c.data[msg.chat.id].user);
+                                    (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable), usersTable, c.data[msg.chat.id].user);
                             }), () => __awaiter(void 0, void 0, void 0, function* () {
                                 c.botUI.deleteAllMarked(msg);
-                                Manager(msg, c, end);
+                                Manager(msg, c, end, newCashedData);
                             }));
-                            // c.botUI.context(msg, async ()=>{  
-                            //     const opts = {
-                            //         reply_markup: { inline_keyboard: [ 
-                            //             [ { 
-                            //                 text: TX_BTN_YES, 
-                            //                 callback_data: 'yes_' + id + '_' + ind, 
-                            //             } ,
-                            //             { 
-                            //                 text: TX_BTN_NO, 
-                            //                 callback_data: 'no', 
-                            //             } ] 
-                            //         ]},
-                            //         mark_to_remove: true
-                            //     }
-                            //     await c.botUI.message(msg, TX_CONFIRN, opts)
-                            // },{ 
-                            //     callback_query:
-                            //     async (query:any)=>{    
-                            //         const split = query.data.split('_')
-                            //         const type = split[0]
-                            //         const id = split[1]
-                            //         const ind = split[2]
-                            //         if(type === 'yes') {
-                            //             c.botUI.deleteAllMarked(msg)
-                            //             c.data[msg.chat.id].status = 'Отмена'
-                            //             await saveRequest(msg, c, id, true) //save only status
-                            //             zayavkiTable['Статус'][ind] = 'Отмена'
-                            //             await c.botUI.message(msg, dataToMessage(zayavkaToData(ind, zayavkiTable), true, usersTable))
-                            //             await c.botUI.message(msg, TX_EDIT_CANCELED)
-                            //             //пишем мастеру
-                            //             await Notify(msg, c, TX_EDIT_CANCELED_IMFO + '\n' + 
-                            //                 dataToMessage(c.data[msg.chat.id]), c.data[msg.chat.id].user) 
-                            //         } else {
-                            //             c.botUI.deleteAllMarked(msg)
-                            //             Manager(msg, c, end)
-                            //         }                     
-                            //     }
-                            // })
                         }
                     })
                 });

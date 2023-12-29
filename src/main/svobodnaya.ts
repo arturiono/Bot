@@ -16,6 +16,7 @@ const TX_INITIAL_MESSAGE = "*Заявка в свободной форме*"
 
 export default async (msg:any, c: MainContext, end:()=>any) => {
 
+    const objectsTable = await c.tableUI.getList('Обьекты', ['Auto #', 'Название'])
     await c.botUI.message(msg, TX_INITIAL_MESSAGE)
 
     c.data[msg.chat.id] = {
@@ -44,7 +45,7 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
 
                 await Notify(msg, c,
                     TX_NEW_ZAYAVKA_MNG + 
-                    dataToMessage(c.data[msg.chat.id], true, usersTable), usersTable,
+                    dataToMessage(c.data[msg.chat.id], objectsTable, true, usersTable), usersTable,
                     null) //пишем менджеру
                 end()
             })

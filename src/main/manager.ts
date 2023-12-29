@@ -45,12 +45,30 @@ const TX_EDIT_STATUS_INFO = "🚀 Cтатус заявки был изменен
 
 // const TX_INITIAL_MESSAGE = '⌨️ Введите *комментарий для менджера*:'
 // page = 1,2,3 ...
-let zayavkiTable: any
-let usersTable: any 
 
-const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean = true) => {
 
-    if(updateData) {
+interface cashedData {
+    zayavkiTable: any
+    usersTable: any
+    objectsTable: any
+}
+
+const Manager = async (msg:any, c: MainContext, end:()=>any, cashedData?:cashedData ) => {
+
+    let zayavkiTable: any
+    let usersTable: any 
+    let objectsTable: any
+    let newCashedData: cashedData
+
+    if(cashedData) {
+
+        zayavkiTable = cashedData.zayavkiTable
+        usersTable = cashedData.usersTable
+        objectsTable = cashedData.objectsTable
+
+        newCashedData = cashedData
+
+    } else {
 
         zayavkiTable = await c.tableUI.getList('Заявки', [
             '#', 'Тип', 'Доставка', 'Ожидаемая дата/время', 'Статус', 'Cотрудник', 'Объект A', 'Объект B', 
@@ -61,16 +79,16 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean
             '#', 'ФИО', 'Роль', 'ChatId'
         ])
 
+        objectsTable = await c.tableUI.getList('Обьекты', ['Auto #', 'Название'])
 
-    } else {
-
-        if(zayavkiTable === undefined)
-            console.log('Ошибка. Данные zayavkiTable не были ранее закэшированы.')
-
-        if(usersTable === undefined)
-            console.log('Ошибка. Данные usersTable не были ранее закэшированы.')
+        newCashedData = {
+            zayavkiTable,
+            usersTable,
+            objectsTable
+        }
 
     }
+
     
     // // реверс порядок для массива
     // for(const key in zayavkiTable) {
@@ -113,7 +131,7 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean
                 })
      
                 let dt:any = zayavkaToData(i, zayavkiTable)
-                let zayavka = dataToMessage(dt, true, usersTable)
+                let zayavka = dataToMessage(dt, objectsTable, true, usersTable)
 
                 const nmsg = await c.botUI.message(msg, zayavka , opts)
                 messagesIds[zayavkiTable['#'][i]] = nmsg.message_id
@@ -152,10 +170,10 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean
                         // уведомляем мастера
                         let usersTable = await c.tableUI.getList('Сотрудники', ['#', 'Роль', 'ChatId'])
                         await Notify(msg, c, TX_EDIT_CONFIRMED_INFO + '\n' 
-                            + dataToMessage(c.data[msg.chat.id]), usersTable, c.data[msg.chat.id].user) //пишем мастеру
+                            + dataToMessage(c.data[msg.chat.id], objectsTable), usersTable, c.data[msg.chat.id].user) //пишем мастеру
                     } else {
                         // console.log('ВЕРНУТЬСЯ HAPPEN')
-                        await Manager(msg, c, end) 
+                        await Manager(msg, c, end, newCashedData) 
                     }
 
                 }, false, usersTable) // запускаем сценарий confirmation сразу с редактирования
@@ -166,7 +184,7 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean
 
                     c.botUI.deleteAllMarked(msg)
                     c.data[msg.chat.id] = zayavkaToData(ind, zayavkiTable)
-                    await c.botUI.message(msg, dataToMessage(c.data[msg.chat.id], true, usersTable), {mark_to_remove: true})
+                    await c.botUI.message(msg, dataToMessage(c.data[msg.chat.id], objectsTable, true, usersTable), {mark_to_remove: true})
 
                     const opts = {
                         reply_markup: { inline_keyboard: []}, mark_to_remove: true
@@ -287,7 +305,7 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean
                         if(type === 'back') {
                             
                             c.botUI.deleteAllMarked(msg)
-                            await Manager(msg, c, end)
+                            await Manager(msg, c, end, newCashedData)
 
                             // const STATUS_OBRABOTKA = "Обработка"
                             // const STATUS_SOBRAN = "Собран"
@@ -308,12 +326,12 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean
                                 
                                 // если все хорошо и нет ошибки, то сразу меняем сатус в КЭШ (не спрашиваем у сервера)
                                 zayavkiTable['Статус'][ind] = type
-                                await c.botUI.message(msg, dataToMessage(zayavkaToData(ind, zayavkiTable), true, usersTable))
+                                await c.botUI.message(msg, dataToMessage(zayavkaToData(ind, zayavkiTable), objectsTable, true, usersTable))
                                 await c.botUI.message(msg, TX_EDIT_STATUS)
 
                                 //пишем мастеру
                                 await Notify(msg, c, TX_EDIT_STATUS_INFO + '\n' + 
-                                    dataToMessage(c.data[msg.chat.id]), usersTable, c.data[msg.chat.id].user) 
+                                    dataToMessage(c.data[msg.chat.id], objectsTable), usersTable, c.data[msg.chat.id].user) 
 
                             }
 
@@ -322,12 +340,12 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean
 
                                 c.botUI.deleteAllMarked(msg)
                                 c.data[msg.chat.id] = zayavkaToData(ind, zayavkiTable)
-                                await c.botUI.message(msg, dataToMessage(c.data[msg.chat.id], true, usersTable), {mark_to_remove: true})
+                                await c.botUI.message(msg, dataToMessage(c.data[msg.chat.id], objectsTable, true, usersTable), {mark_to_remove: true})
 
                                 await YesNo(msg, c, TX_CONFIRN_OBJ, async ()=>{
                                     await save()
                                 }, async ()=>{
-                                    await Manager(msg, c, end)
+                                    await Manager(msg, c, end, newCashedData)
                                 })
 
                             } else {
@@ -339,7 +357,7 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean
                 
                             c.botUI.deleteAllMarked(msg)
                             c.data[msg.chat.id] = zayavkaToData(ind, zayavkiTable)
-                            await c.botUI.message(msg, dataToMessage(c.data[msg.chat.id], true, usersTable), {mark_to_remove: true})
+                            await c.botUI.message(msg, dataToMessage(c.data[msg.chat.id], objectsTable, true, usersTable), {mark_to_remove: true})
 
                             await YesNo(msg, c, TX_CONFIRN_CANCEL, async ()=>{
 
@@ -349,69 +367,19 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, updateData: Boolean
                                 await saveRequest(msg, c, id, true) //save only status
                                 
                                 zayavkiTable['Статус'][ind] = 'Отмена'
-                                await c.botUI.message(msg, dataToMessage(zayavkaToData(ind, zayavkiTable), true, usersTable))
+                                await c.botUI.message(msg, dataToMessage(zayavkaToData(ind, zayavkiTable), objectsTable, true, usersTable))
                                 await c.botUI.message(msg, TX_EDIT_CANCELED)
 
                                 //пишем мастеру
                                 await Notify(msg, c, TX_EDIT_CANCELED_IMFO + '\n' + 
-                                    dataToMessage(c.data[msg.chat.id]), usersTable, c.data[msg.chat.id].user) 
+                                    dataToMessage(c.data[msg.chat.id], objectsTable), usersTable, c.data[msg.chat.id].user) 
 
                             }, async ()=>{
 
                                 c.botUI.deleteAllMarked(msg)
-                                Manager(msg, c, end)
+                                Manager(msg, c, end, newCashedData)
 
                             })
-
-                            // c.botUI.context(msg, async ()=>{  
-            
-                            //     const opts = {
-                            //         reply_markup: { inline_keyboard: [ 
-                            //             [ { 
-                            //                 text: TX_BTN_YES, 
-                            //                 callback_data: 'yes_' + id + '_' + ind, 
-                            //             } ,
-                            //             { 
-                            //                 text: TX_BTN_NO, 
-                            //                 callback_data: 'no', 
-                            //             } ] 
-                            //         ]},
-                            //         mark_to_remove: true
-                            //     }
-                
-                            //     await c.botUI.message(msg, TX_CONFIRN, opts)
-            
-                            // },{ 
-                            //     callback_query:
-                            //     async (query:any)=>{    
-                                    
-                            //         const split = query.data.split('_')
-                            //         const type = split[0]
-                            //         const id = split[1]
-                            //         const ind = split[2]
-                                    
-                            //         if(type === 'yes') {
-                                        
-                            //             c.botUI.deleteAllMarked(msg)
-
-                            //             c.data[msg.chat.id].status = 'Отмена'
-                            //             await saveRequest(msg, c, id, true) //save only status
-                                        
-                            //             zayavkiTable['Статус'][ind] = 'Отмена'
-                            //             await c.botUI.message(msg, dataToMessage(zayavkaToData(ind, zayavkiTable), true, usersTable))
-                            //             await c.botUI.message(msg, TX_EDIT_CANCELED)
-                                        
-                            //             //пишем мастеру
-                            //             await Notify(msg, c, TX_EDIT_CANCELED_IMFO + '\n' + 
-                            //                 dataToMessage(c.data[msg.chat.id]), c.data[msg.chat.id].user) 
-                                        
-            
-                            //         } else {
-                            //             c.botUI.deleteAllMarked(msg)
-                            //             Manager(msg, c, end)
-                            //         }                     
-                            //     }
-                            // })
                             
                         }                     
                     }

@@ -37,14 +37,15 @@ const TX_EDIT_CONFIRMED = "✅ *Заявка обновлена*. Отправи
 const TX_EDIT_CANCELED = "⛔️ *Заявка отменена*. Отправил информацию менеджеру";
 // const TX_INITIAL_MESSAGE = '⌨️ Введите *комментарий для менджера*:'
 // page = 1,2,3 ...
-let zayavkiData;
-const MoiZayavki = (msg, c, page, end, updateData = true) => __awaiter(void 0, void 0, void 0, function* () {
-    // console.log(page)
-    if (updateData)
+const MoiZayavki = (msg, c, page, end, newZayavkiData) => __awaiter(void 0, void 0, void 0, function* () {
+    const objectsTable = yield c.tableUI.getList('Обьекты', ['Auto #', 'Название']);
+    // кэшируемые данные
+    let zayavkiData;
+    if (newZayavkiData)
+        zayavkiData = newZayavkiData;
+    else
         zayavkiData = yield c.tableUI.getList('Заявки', ['#', 'Тип', 'Доставка', 'Ожидаемая дата/время', 'Статус', 'Cотрудник', 'Объект A', 'Объект B',
             'Инструмент', 'Расходники', 'Комментарий', 'Дата созд.', 'Дата изм.']);
-    else if (zayavkiData === undefined)
-        console.log('Ошибка. данные не были ранее закэшированы.');
     // реверс порядок для массива
     for (const key in zayavkiData) {
         zayavkiData[key] = zayavkiData[key].reverse();
@@ -115,11 +116,11 @@ const MoiZayavki = (msg, c, page, end, updateData = true) => __awaiter(void 0, v
                         ] },
                     mark_to_remove: true
                 };
-                const nmsg = yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)((0, requestConverter_1.zayavkaToData)(i, zayavkiData)), opts);
+                const nmsg = yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)((0, requestConverter_1.zayavkaToData)(i, zayavkiData), objectsTable), opts);
                 messagesIds[zayavkiData['#'][i]] = nmsg.message_id;
             }
             else {
-                yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)((0, requestConverter_1.zayavkaToData)(i, zayavkiData)), { mark_to_remove: true });
+                yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)((0, requestConverter_1.zayavkaToData)(i, zayavkiData), objectsTable), { mark_to_remove: true });
             }
         }
         yield showNavigationButton('next', page, zayavkiData['#'].length);
@@ -140,11 +141,11 @@ const MoiZayavki = (msg, c, page, end, updateData = true) => __awaiter(void 0, v
                         // уведомляем менеджера
                         const usersTable = yield c.tableUI.getList('Сотрудники', ['#', 'ФИО', 'Роль', 'ChatId']);
                         yield (0, notify_1.default)(msg, c, TX_NOTIFY_UPDATE + '\n'
-                            + (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], true, usersTable), usersTable, null);
+                            + (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable, true, usersTable), usersTable, null);
                         end();
                     }
                     else {
-                        MoiZayavki(msg, c, page, end);
+                        MoiZayavki(msg, c, page, end, newZayavkiData);
                     }
                 }), false); // запускаем сценарий confirmation сразу с редактирования
             }
@@ -152,7 +153,7 @@ const MoiZayavki = (msg, c, page, end, updateData = true) => __awaiter(void 0, v
                 c.botUI.context(msg, () => __awaiter(void 0, void 0, void 0, function* () {
                     c.botUI.deleteAllMarked(msg);
                     c.data[msg.chat.id] = (0, requestConverter_1.zayavkaToData)(val2, zayavkiData);
-                    yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id]), { mark_to_remove: true });
+                    yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable), { mark_to_remove: true });
                     const opts = {
                         reply_markup: { inline_keyboard: [
                                 [{
@@ -178,11 +179,11 @@ const MoiZayavki = (msg, c, page, end, updateData = true) => __awaiter(void 0, v
                             c.data[msg.chat.id].status = 'Отмена';
                             yield (0, saveRequest_1.saveRequest)(msg, c, id, true); //save only status
                             zayavkiData['Статус'][ind] = 'Отмена';
-                            yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)((0, requestConverter_1.zayavkaToData)(ind, zayavkiData)));
+                            yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)((0, requestConverter_1.zayavkaToData)(ind, zayavkiData), objectsTable));
                             yield c.botUI.message(msg, TX_EDIT_CANCELED);
                             const usersTable = yield c.tableUI.getList('Сотрудники', ['#', 'ФИО', 'Роль', 'ChatId']);
                             yield (0, notify_1.default)(msg, c, TX_NOTIFY_CANCELED + '\n'
-                                + (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id]), usersTable, null); //пишем менджеру
+                                + (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable), usersTable, null); //пишем менджеру
                             end();
                         }
                         else {

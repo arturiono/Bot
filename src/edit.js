@@ -36,16 +36,17 @@ const TX_BUTTON_TIME = "Дата и время";
 const TX_BUTTON_INSTRUMENT = "Инсрумент";
 const TX_BUTTON_RASHODNIKI = "Расходные материалы";
 const TX_BUTTON_COMMENT = "Комментарий";
-const TX_NAVIGATION = "Сохранение";
-const TX_SAVE = "Подтвердить";
+const TX_NAVIGATION = "Навигация";
 const TX_BUTTON_BACK = "Вернуться";
-const TX_BUTTON_SAVE = "Сохранить";
+const TX_SAVE = "Сохранение";
+const TX_BUTTON_SAVE = "Подтвердить";
 // предлагаем пользователю вернутся в сценарии редактирования
 const Edit = (msg, c, end, editingHappen, usersTable) => __awaiter(void 0, void 0, void 0, function* () {
+    const objectsTable = yield c.tableUI.getList('Обьекты', ['Auto #', 'Название']);
     let nmsg;
     let showZayavka = () => __awaiter(void 0, void 0, void 0, function* () {
         const showName = usersTable ? true : false;
-        nmsg = yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], showName, usersTable), { mark_to_remove: true });
+        nmsg = yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable, showName, usersTable), { mark_to_remove: true });
     });
     c.botUI.context(msg, () => __awaiter(void 0, void 0, void 0, function* () {
         c.botUI.deleteAllMarked(msg);

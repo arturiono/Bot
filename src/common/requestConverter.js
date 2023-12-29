@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.zayavkaToData = exports.dataToMessage = void 0;
 // usersTable - данные о имени сотрудника
-function dataToMessage(data, showName, usersTable) {
+function dataToMessage(data, objectTable, showName, usersTable) {
     // %%% Получить 'Обьекты' для вывода названия Обьектов
     let str = '';
     if (showName && usersTable) {
@@ -28,8 +28,10 @@ function dataToMessage(data, showName, usersTable) {
     str += 'Дата и время: *' + data.dateTime + '*\n';
     if (data.type !== 'Свободная') {
         // %%% получить назание объекта
-        const from = data.from === '0' ? 'Склад' : data.from;
-        const to = data.to === '0' ? 'Склад' : data.to;
+        const fromId = objectTable['Auto #'].indexOf(data.from);
+        const from = objectTable['Название'][fromId];
+        const toId = objectTable['Auto #'].indexOf(data.to);
+        const to = objectTable['Название'][toId];
         str += 'Точка А: *' + from + '*\n';
         str += 'Точка B: *' + to + '*\n';
         if (Object.values(data.tools).length !== 0)

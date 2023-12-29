@@ -102,7 +102,7 @@ botUI.commands({
     zayavka: async (msg:any) => {
         await tryCatch(msg, async ()=>{
             await botUI.deleteAllMarked(msg)
-            if(Authorize(msg, c)) {           
+            if(await Authorize(msg, c)) {           
                 await Zayavka(msg, c, async ()=>{
                     // console.log(data)
                 }) 
@@ -113,10 +113,10 @@ botUI.commands({
     moizayavki: async (msg:any) => {
         await tryCatch(msg, async ()=>{
             await botUI.deleteAllMarked(msg) 
-            if(Authorize(msg, c)){
+            if(await Authorize(msg, c)){
                 await MoiZayavki(msg, c, 1, ()=>{
                     // console.log('ended')
-                }, true)
+                })
             }
         })
     },
@@ -124,7 +124,7 @@ botUI.commands({
     namne: async (msg:any) => {
         await tryCatch(msg, async ()=>{
             await botUI.deleteAllMarked(msg)
-            if(Authorize(msg, c)){
+            if(await Authorize(msg, c)){
                 await NaMne(msg, c, ()=>{
                     // console.log('ended NaMne')
                 })
@@ -135,7 +135,7 @@ botUI.commands({
     vozvrat: async (msg:any) => {
         await tryCatch(msg, async ()=>{
             await botUI.deleteAllMarked(msg)
-            if(Authorize(msg, c)) {           
+            if(await Authorize(msg, c)) {           
                 await Vozvrat(msg, c, async ()=>{
                     // console.log(data)
                 }) 
@@ -146,7 +146,7 @@ botUI.commands({
     megduobj: async (msg:any) => {
         await tryCatch(msg, async ()=>{
             await botUI.deleteAllMarked(msg)
-            if(Authorize(msg, c)) {           
+            if(await Authorize(msg, c)) {           
                 await MegduObj(msg, c, async ()=>{
                     // console.log(data)
                 }) 
@@ -157,7 +157,7 @@ botUI.commands({
     freezayavka: async (msg:any) => {
         await tryCatch(msg, async ()=>{
             await botUI.deleteAllMarked(msg)
-            if(Authorize(msg, c)) {           
+            if(await  Authorize(msg, c)) {           
                 await Svobodnaya(msg, c, async ()=>{
                     // console.log(data)
                 }) 
@@ -168,10 +168,10 @@ botUI.commands({
     mng: async (msg:any) => {
         await tryCatch(msg, async ()=>{
             await c.botUI.deleteAllMarked(msg)
-            if(Authorize(msg, c, true)){
+            if(await Authorize(msg, c, true)){
                 await Manager(msg, c, ()=>{
                     // console.log('ended')
-                }, true)
+                })
             }
         })
     },
