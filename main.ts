@@ -20,7 +20,7 @@ import MegduObj from './src/main/megduobj'
 import Svobodnaya from './src/main/svobodnaya'
 import MoiZayavki from './src/main/moizayavki'
 import NaMne from './src/main/namne'
-import Manager from './src/main/manager'
+import Manager from './src/main/manager'  
 
 const TX_WELLCOME_MESSAGE = "Привет! Я бот компании Naptech. *Используй меню /* для работы со мной."
 
@@ -66,7 +66,7 @@ let tryCatch = async (msg:any, func:any)=>{
             `Caught exception: ${e}\n`, { flag: 'a+' }, (err:any)=>{}
         )
 
-        botUI.message(msg, '*Произошла неизвестная ошибка!* Попробуй заново воспользоватся меню')
+        await botUI.message(msg, '*Произошла неизвестная ошибка!* Попробуй заново воспользоватся меню')
     }
 }
 

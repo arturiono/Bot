@@ -20,7 +20,8 @@ export type MainContext = {
 export interface Rashodniki {
     [key: string]: {
         name:string, 
-        count: number
+        count: number,
+        units: string
     }
 } 
 

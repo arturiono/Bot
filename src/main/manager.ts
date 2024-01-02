@@ -46,7 +46,6 @@ const TX_EDIT_STATUS_INFO = "🚀 Cтатус заявки был изменен
 // const TX_INITIAL_MESSAGE = '⌨️ Введите *комментарий для менджера*:'
 // page = 1,2,3 ...
 
-
 interface cashedData {
     zayavkiTable: any
     usersTable: any

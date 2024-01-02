@@ -16,6 +16,7 @@ export interface Rashodniki {
     [key: string]: {
         name: string;
         count: number;
+        units: string;
     };
 }
 export interface Tools {

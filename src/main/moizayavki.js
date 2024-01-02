@@ -104,18 +104,20 @@ const MoiZayavki = (msg, c, page, end, newZayavkiData) => __awaiter(void 0, void
                 && zayavkiData['Статус'][i] !== 'Объект'
                 && zayavkiData['Статус'][i] !== 'Склад') {
                 const opts = {
-                    reply_markup: { inline_keyboard: [
-                            [{
-                                    text: TX_BTN_EDIT,
-                                    callback_data: 'edit' + '_' + zayavkiData['#'][i] + '_' + i, //_id_i //индекс
-                                },
-                                {
-                                    text: TX_BTN_CANCEL,
-                                    callback_data: 'cancel' + '_' + zayavkiData['#'][i] + '_' + i,
-                                }]
-                        ] },
+                    reply_markup: { inline_keyboard: [[]] },
                     mark_to_remove: true
                 };
+                const btns = opts.reply_markup.inline_keyboard[0];
+                // редактирование доступно только в обработке
+                if (zayavkiData['Статус'][i] === 'Обработка')
+                    btns.push({
+                        text: TX_BTN_EDIT,
+                        callback_data: 'edit' + '_' + zayavkiData['#'][i] + '_' + i, //_id_i //индекс
+                    });
+                btns.push({
+                    text: TX_BTN_CANCEL,
+                    callback_data: 'cancel' + '_' + zayavkiData['#'][i] + '_' + i,
+                });
                 const nmsg = yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)((0, requestConverter_1.zayavkaToData)(i, zayavkiData), objectsTable), opts);
                 messagesIds[zayavkiData['#'][i]] = nmsg.message_id;
             }
@@ -142,7 +144,7 @@ const MoiZayavki = (msg, c, page, end, newZayavkiData) => __awaiter(void 0, void
                         const usersTable = yield c.tableUI.getList('Сотрудники', ['#', 'ФИО', 'Роль', 'ChatId']);
                         yield (0, notify_1.default)(msg, c, TX_NOTIFY_UPDATE + '\n'
                             + (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable, true, usersTable), usersTable, null);
-                        end();
+                        yield end();
                     }
                     else {
                         MoiZayavki(msg, c, page, end, newZayavkiData);
@@ -184,7 +186,7 @@ const MoiZayavki = (msg, c, page, end, newZayavkiData) => __awaiter(void 0, void
                             const usersTable = yield c.tableUI.getList('Сотрудники', ['#', 'ФИО', 'Роль', 'ChatId']);
                             yield (0, notify_1.default)(msg, c, TX_NOTIFY_CANCELED + '\n'
                                 + (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable), usersTable, null); //пишем менджеру
-                            end();
+                            yield end();
                         }
                         else {
                             c.botUI.deleteAllMarked(msg);

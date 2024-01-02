@@ -8,3 +8,29 @@ Time: Sun Dec 24 2023 16:33:57 GMT+0300 (Москва, стандартное в
 Caught exception: TypeError: sheets.spreadsheets.values.batchGet2 is not a function
 Time: Sun Dec 24 2023 17:33:34 GMT+0300 (Москва, стандартное время)
 Caught exception: Error: Invalid value at 'major_dimension' (type.googleapis.com/google.apps.sheets.v4.Dimension), "COLUMNSError"
+Time: Fri Dec 29 2023 18:34:33 GMT+0300 (Москва, стандартное время)
+Caught exception: FetchError: Invalid response body while trying to fetch https://oauth2.googleapis.com/token: read ECONNRESET
+Time: Fri Dec 29 2023 18:58:17 GMT+0300 (Москва, стандартное время)
+Caught exception: FetchError: Invalid response body while trying to fetch https://oauth2.googleapis.com/token: read ECONNRESET
+Time: Fri Dec 29 2023 19:09:00 GMT+0300 (Москва, стандартное время)
+Caught exception: FetchError: Invalid response body while trying to fetch https://oauth2.googleapis.com/token: read ECONNRESET
+Time: Fri Dec 29 2023 19:10:56 GMT+0300 (Москва, стандартное время)
+Caught exception: FetchError: Invalid response body while trying to fetch https://oauth2.googleapis.com/token: read ECONNRESET
+Time: Mon Jan 01 2024 22:36:38 GMT+0300 (Москва, стандартное время)
+Caught exception: TypeError: Cannot read properties of undefined (reading 'err')
+Time: Mon Jan 01 2024 22:36:45 GMT+0300 (Москва, стандартное время)
+Caught exception: TypeError: Cannot read properties of undefined (reading 'err')
+Time: Mon Jan 01 2024 22:36:49 GMT+0300 (Москва, стандартное время)
+Caught exception: TypeError: Cannot read properties of undefined (reading 'err')
+Time: Mon Jan 01 2024 22:40:18 GMT+0300 (Москва, стандартное время)
+Caught exception: Error: Invalid value at 'major_dimension' (type.googleapis.com/google.apps.sheets.v4.Dimension), "COLUMNSError"
+Time: Mon Jan 01 2024 22:40:39 GMT+0300 (Москва, стандартное время)
+Caught exception: Error: Invalid value at 'major_dimension' (type.googleapis.com/google.apps.sheets.v4.Dimension), "COLUMNSError"
+Time: Mon Jan 01 2024 22:45:37 GMT+0300 (Москва, стандартное время)
+Caught exception: Error: API key not valid. Please pass a valid API key.
+Time: Mon Jan 01 2024 22:45:42 GMT+0300 (Москва, стандартное время)
+Caught exception: Error: API key not valid. Please pass a valid API key.
+Time: Mon Jan 01 2024 22:45:45 GMT+0300 (Москва, стандартное время)
+Caught exception: Error: API key not valid. Please pass a valid API key.
+Time: Mon Jan 01 2024 22:45:48 GMT+0300 (Москва, стандартное время)
+Caught exception: Error: API key not valid. Please pass a valid API key.

@@ -51,7 +51,7 @@ exports.default = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* (
                 const usersTable = yield c.tableUI.getList('Сотрудники', ['#', 'ФИО', 'Роль', 'ChatId']);
                 yield (0, notify_1.default)(msg, c, TX_NEW_ZAYAVKA_MNG +
                     (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable, true, usersTable), usersTable, null); //пишем менджеру
-                end();
+                yield end();
             }));
         }));
     });

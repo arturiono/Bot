@@ -59,7 +59,7 @@ export function dataToMessage (data:ABReqest, objectTable:any, showName?:boolean
         if(Object.values(data.rashodniki).length !==0)    
             str += 'Расходники: *' + Object.values(data.rashodniki).map(function(item:any, index:any) {
                 const space = index === 0? '' : ' ' 
-                return space + item.name + ': ' + item.count
+                return space + item.name + ' - ' + item.count + ' ' + item.units
             }) + '*\n'
     }
 

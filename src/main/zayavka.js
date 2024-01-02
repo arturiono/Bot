@@ -97,7 +97,7 @@ exports.default = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* (
         // пишем менеджеру
         const usersTable = yield c.tableUI.getList('Сотрудники', ['#', 'ФИО', 'Роль', 'ChatId']);
         yield (0, notify_1.default)(msg, c, TX_NEW_ZAYAVKA_MNG + (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable, true, usersTable), usersTable, null); //пишем менджеру
-        end();
+        yield end();
     });
     yield (0, toObject_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, dostavka_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
@@ -106,7 +106,7 @@ exports.default = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* (
                     yield (0, rashodniki_1.default)(msg, c, false, true, () => __awaiter(void 0, void 0, void 0, function* () {
                         yield (0, comment_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
                             yield (0, confirm_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
-                                ConfirmedByUser();
+                                yield ConfirmedByUser();
                             }));
                         }));
                     }));

@@ -44,7 +44,7 @@ function dataToMessage(data, objectTable, showName, usersTable) {
         if (Object.values(data.rashodniki).length !== 0)
             str += 'Расходники: *' + Object.values(data.rashodniki).map(function (item, index) {
                 const space = index === 0 ? '' : ' ';
-                return space + item.name + ': ' + item.count;
+                return space + item.name + ' - ' + item.count + ' ' + item.units;
             }) + '*\n';
     }
     if (data.comment !== 'Null')

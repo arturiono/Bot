@@ -357,9 +357,9 @@ let MRashodniki = async (msg:any, c: MainContext, editMode:Boolean, showInitialM
                             if(addedRashodniki[query.data] === undefined) {
                                 let name = Table['Название'][indx]
                                 if (Table['Вариант'][indx] !== '' && Table['Вариант'][indx] !== undefined)
-                                name += ' | ' + Table['Вариант'][indx]
+                                name += ' (' + Table['Вариант'][indx] +  ')'
 
-                                addedRashodniki[query.data] = {name:name, count: 1}
+                                addedRashodniki[query.data] = {name:name, count: 1, units: Table['Измерение'][indx]}
                                 showRashodnikMessage(query.data)
                             } else {
                                 await c.botUI.message(msg, Table['Название'][indx] + TX_EXISTS, {mark_to_remove: true});

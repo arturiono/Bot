@@ -121,18 +121,22 @@ const MoiZayavki = async (msg:any, c: MainContext, page: number, end:()=>any, ne
                 && zayavkiData['Статус'][i] !== 'Склад'
             ) {
                 const opts = {
-                    reply_markup: { inline_keyboard: [ 
-                        [ { 
-                            text: TX_BTN_EDIT, 
-                            callback_data: 'edit' + '_' + zayavkiData['#'][i] + '_' + i, //_id_i //индекс
-                        } ,
-                        { 
-                            text: TX_BTN_CANCEL, 
-                            callback_data: 'cancel' + '_' + zayavkiData['#'][i] + '_' + i,
-                        } ] 
-                    ]},
+                    reply_markup: { inline_keyboard: [[]]},
                     mark_to_remove: true
                 }
+                const btns:any = opts.reply_markup.inline_keyboard[0]
+
+                // редактирование доступно только в обработке
+                if(zayavkiData['Статус'][i] === 'Обработка')
+                    btns.push({ 
+                        text: TX_BTN_EDIT, 
+                        callback_data: 'edit' + '_' + zayavkiData['#'][i] + '_' + i, //_id_i //индекс
+                    })
+
+                btns.push({ 
+                    text: TX_BTN_CANCEL, 
+                    callback_data: 'cancel' + '_' + zayavkiData['#'][i] + '_' + i,
+                })
 
                 const nmsg = await c.botUI.message(msg, dataToMessage(zayavkaToData(i, zayavkiData), objectsTable), opts)
                 messagesIds[zayavkiData['#'][i]] = nmsg.message_id
@@ -166,7 +170,7 @@ const MoiZayavki = async (msg:any, c: MainContext, page: number, end:()=>any, ne
                         const usersTable = await c.tableUI.getList('Сотрудники', ['#', 'ФИО', 'Роль', 'ChatId'])
                         await Notify(msg, c, TX_NOTIFY_UPDATE + '\n' 
                             + dataToMessage(c.data[msg.chat.id], objectsTable, true, usersTable), usersTable, null) 
-                        end()
+                        await end()
                     } else {
                         MoiZayavki(msg, c, page, end, newZayavkiData) 
                     }
@@ -221,7 +225,7 @@ const MoiZayavki = async (msg:any, c: MainContext, page: number, end:()=>any, ne
                             await Notify(msg, c, TX_NOTIFY_CANCELED + '\n' 
                                 + dataToMessage(c.data[msg.chat.id], objectsTable), usersTable, null) //пишем менджеру
 
-                            end()
+                            await end()
 
                         } else {
                             c.botUI.deleteAllMarked(msg)

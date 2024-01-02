@@ -21,7 +21,7 @@ export default class BotUI {
 
         // обработчик для любого события message, callback_query, contact и пр.
         events.forEach((event:any)=>{
-            this.bot.on(event, (obj:any)=>{
+            this.bot.on(event, async (obj:any)=>{
                 
                 let callbackChatId = ''
                 if(event === 'message') callbackChatId = String(obj.chat.id)
@@ -33,7 +33,7 @@ export default class BotUI {
                     typeof this.replyContext[callbackChatId][event] == 'function') {
                     // console.log('CALLED EVENТ:')
                     // console.log(event)
-                    this.replyContext[callbackChatId][event](obj)
+                    await this.replyContext[callbackChatId][event](obj)
                 }  
 
                 return

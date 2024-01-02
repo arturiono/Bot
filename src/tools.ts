@@ -207,7 +207,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                     //     await c.botUI.message(msg, cachedObject[id].name + TX_EXISTS_2, {mark_to_remove: true})
                     // } else {
                         showAddedTool(id, cachedObject[id].name, cachedObject[id].desc)
-                        addedTools[id] = cachedObject[id].name
+                        addedTools[id] = cachedObject[id].name + ' (' + cachedObject[id].desc + ')'
 
                         c.botUI.delete(msg, searchResultMessages[id])
                         delete searchResultMessages[id] 

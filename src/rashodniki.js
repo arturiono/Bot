@@ -301,8 +301,8 @@ let MRashodniki = (msg, c, editMode, showInitialMessage, end) => __awaiter(void 
                             if (addedRashodniki[query.data] === undefined) {
                                 let name = Table['Название'][indx];
                                 if (Table['Вариант'][indx] !== '' && Table['Вариант'][indx] !== undefined)
-                                    name += ' | ' + Table['Вариант'][indx];
-                                addedRashodniki[query.data] = { name: name, count: 1 };
+                                    name += ' (' + Table['Вариант'][indx] + ')';
+                                addedRashodniki[query.data] = { name: name, count: 1, units: Table['Измерение'][indx] };
                                 showRashodnikMessage(query.data);
                             }
                             else {

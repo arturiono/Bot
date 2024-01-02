@@ -116,7 +116,7 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
         await Notify(msg, c,
             TX_NEW_ZAYAVKA_MNG + dataToMessage(c.data[msg.chat.id], objectsTable, true, usersTable), usersTable, 
             null) //пишем менджеру
-        end()
+        await end()
     }
 
     await Object(msg, c, false, async ()=>{
@@ -126,7 +126,7 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
                     await Rashodniki(msg, c, false, true, async ()=>{
                         await Comment(msg, c, false, async ()=>{  
                             await Confirm(msg, c, async ()=>{ 
-                                ConfirmedByUser()
+                                await ConfirmedByUser()
                             }) 
                         })
                     })

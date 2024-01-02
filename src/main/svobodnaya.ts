@@ -47,7 +47,7 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
                     TX_NEW_ZAYAVKA_MNG + 
                     dataToMessage(c.data[msg.chat.id], objectsTable, true, usersTable), usersTable,
                     null) //пишем менджеру
-                end()
+                await end()
             })
         })
     }
