@@ -104,7 +104,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
             // S.Результаты поиска
             // очистим предыдущий список сообщений            
             c.botUI.deleteAllMarked(msg);
-            clearsearchResultMessagess();
+            yield clearsearchResultMessagess();
             // messagesToRemove = [msg.message_id]
             c.botUI.markToDelete(msg, msg.message_id); //добавляем для будущего удалению сообщение пользователя
             const searchRes = yield (0, search_1.SearchToolsByStr)(c, msg.text);
@@ -142,7 +142,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
                 else { //  S.S Закончить
                     c.data[msg.chat.id].tools = addedTools;
                     c.botUI.deleteAllMarked(msg);
-                    clearsearchResultMessagess();
+                    yield clearsearchResultMessagess();
                     // заменяем все добавленные на сообщения без кнопки
                     for (const id in addedToolsMessages) {
                         c.botUI.delete(msg, addedToolsMessages[id]);
@@ -157,7 +157,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
                 c.data[msg.chat.id].tools = addedTools;
                 yield c.botUI.message(msg, TX_END_CONFIRMED);
                 c.botUI.deleteAllMarked(msg);
-                clearsearchResultMessagess();
+                yield clearsearchResultMessagess();
                 yield end();
                 // S. продолжаем добавление инструмента
             }
@@ -175,9 +175,9 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
                     // if(addedTools.includes(id)) {
                     //     await c.botUI.message(msg, cachedObject[id].name + TX_EXISTS_2, {mark_to_remove: true})
                     // } else {
-                    showAddedTool(id, cachedObject[id].name, cachedObject[id].desc);
+                    yield showAddedTool(id, cachedObject[id].name, cachedObject[id].desc);
                     addedTools[id] = cachedObject[id].name + ' (' + cachedObject[id].desc + ')';
-                    c.botUI.delete(msg, searchResultMessages[id]);
+                    yield c.botUI.delete(msg, searchResultMessages[id]);
                     delete searchResultMessages[id];
                     // }  
                 }

@@ -2,8 +2,10 @@ export default class BotUI {
     bot: any;
     events: any;
     replyContext: any;
+    replyContextMsg: any;
     messagesToRemove: any;
     constructor(token: any, opt: any, events: any);
+    catch(msg: any, e: any): Promise<void>;
     commands(obj: any): void;
     context(msg: any, question: any, replyObj: any): Promise<void>;
     message(msg: any, text: any, opt?: any, customChatId?: any): Promise<any>;

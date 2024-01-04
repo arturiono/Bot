@@ -16,8 +16,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const bot_ui_1 = __importDefault(require("./lib/bot-ui"));
 const TableUI = require('./lib/table-ui');
-const process = require('node:process');
-const fs = require('fs');
+// const process = require('node:process');
+// const fs = require('fs')
 // import Zayavka from './src/zayavkaView'
 // Сценарии 
 const authorize_1 = __importDefault(require("./src/authorize"));
@@ -53,19 +53,6 @@ let botUI = new bot_ui_1.default(BOTTOKEN, OPT, EVENTS);
 let tableUI = new TableUI(SHEET_ID, TABLE_MODEL);
 const data = {};
 const c = { botUI, tableUI, data };
-// ловит все ошибки, чтобы скрипт продолжал работать
-// сохраняет все оишбки в trycatch.log'
-let tryCatch = (msg, func) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield func();
-    }
-    catch (e) {
-        fs.writeSync(process.stderr.fd, `Caught exception: ${e}\n`, (err) => { });
-        fs.writeFile('trycatch.log', `Time: ${new Date().toString()}\n` +
-            `Caught exception: ${e}\n`, { flag: 'a+' }, (err) => { });
-        yield botUI.message(msg, '*Произошла неизвестная ошибка!* Попробуй заново воспользоватся меню');
-    }
-});
 botUI.commands({
     // test: async (msg: any) => {
     //     // Создание заявки 'Со склада'
@@ -86,100 +73,67 @@ botUI.commands({
     //     saveRequest(msg, c)        
     // },
     start: (msg) => __awaiter(void 0, void 0, void 0, function* () {
-        yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
-            yield botUI.deleteAllMarked(msg);
-            yield botUI.message(msg, TX_WELLCOME_MESSAGE);
-            yield (0, authorize_1.default)(msg, c);
-        }));
+        yield botUI.deleteAllMarked(msg);
+        yield botUI.message(msg, TX_WELLCOME_MESSAGE);
+        yield (0, authorize_1.default)(msg, c);
     }),
     zayavka: (msg) => __awaiter(void 0, void 0, void 0, function* () {
-        yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
-            yield botUI.deleteAllMarked(msg);
-            if (yield (0, authorize_1.default)(msg, c)) {
-                yield (0, zayavka_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
-                    // console.log(data)
-                }));
-            }
-        }));
+        yield botUI.deleteAllMarked(msg);
+        if (yield (0, authorize_1.default)(msg, c)) {
+            yield (0, zayavka_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
+                // console.log(data)
+            }));
+        }
     }),
     moizayavki: (msg) => __awaiter(void 0, void 0, void 0, function* () {
-        yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
-            yield botUI.deleteAllMarked(msg);
-            if (yield (0, authorize_1.default)(msg, c)) {
-                yield (0, moizayavki_1.default)(msg, c, 1, () => {
-                    // console.log('ended')
-                });
-            }
-        }));
+        yield botUI.deleteAllMarked(msg);
+        if (yield (0, authorize_1.default)(msg, c)) {
+            yield (0, moizayavki_1.default)(msg, c, 1, () => {
+                // console.log('ended')
+            });
+        }
     }),
     namne: (msg) => __awaiter(void 0, void 0, void 0, function* () {
-        yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
-            yield botUI.deleteAllMarked(msg);
-            if (yield (0, authorize_1.default)(msg, c)) {
-                yield (0, namne_1.default)(msg, c, () => {
-                    // console.log('ended NaMne')
-                });
-            }
-        }));
+        yield botUI.deleteAllMarked(msg);
+        if (yield (0, authorize_1.default)(msg, c)) {
+            yield (0, namne_1.default)(msg, c, () => {
+                // console.log('ended NaMne')
+            });
+        }
     }),
     vozvrat: (msg) => __awaiter(void 0, void 0, void 0, function* () {
-        yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
-            yield botUI.deleteAllMarked(msg);
-            if (yield (0, authorize_1.default)(msg, c)) {
-                yield (0, vozvrat_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
-                    // console.log(data)
-                }));
-            }
-        }));
+        yield botUI.deleteAllMarked(msg);
+        if (yield (0, authorize_1.default)(msg, c)) {
+            yield (0, vozvrat_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
+                // console.log(data)
+            }));
+        }
     }),
     megduobj: (msg) => __awaiter(void 0, void 0, void 0, function* () {
-        yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
-            yield botUI.deleteAllMarked(msg);
-            if (yield (0, authorize_1.default)(msg, c)) {
-                yield (0, megduobj_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
-                    // console.log(data)
-                }));
-            }
-        }));
+        yield botUI.deleteAllMarked(msg);
+        if (yield (0, authorize_1.default)(msg, c)) {
+            yield (0, megduobj_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
+                // console.log(data)
+            }));
+        }
     }),
     freezayavka: (msg) => __awaiter(void 0, void 0, void 0, function* () {
-        yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
-            yield botUI.deleteAllMarked(msg);
-            if (yield (0, authorize_1.default)(msg, c)) {
-                yield (0, svobodnaya_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
-                    // console.log(data)
-                }));
-            }
-        }));
+        yield botUI.deleteAllMarked(msg);
+        if (yield (0, authorize_1.default)(msg, c)) {
+            yield (0, svobodnaya_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
+                // console.log(data)
+            }));
+        }
     }),
     mng: (msg) => __awaiter(void 0, void 0, void 0, function* () {
-        yield tryCatch(msg, () => __awaiter(void 0, void 0, void 0, function* () {
-            yield c.botUI.deleteAllMarked(msg);
-            if (yield (0, authorize_1.default)(msg, c, true)) {
-                yield (0, manager_1.default)(msg, c, () => {
-                    // console.log('ended')
-                });
-            }
-        }));
+        yield c.botUI.deleteAllMarked(msg);
+        if (yield (0, authorize_1.default)(msg, c, true)) {
+            yield (0, manager_1.default)(msg, c, () => {
+                // console.log('ended')
+            });
+        }
     }),
 });
-// promise
-// process.on('uncaughtExceptionMonitor', (err:any, origin:any) => {
-//     // console.log('HAPPEN')
-//     // console.log(err)
-//     // console.log(origin)
-//     // console.log('===========')
-//     fs.writeSync(
-//         process.stderr.fd,
-//         `Caught exception: ${err}\n` +
-//         `Exception origin: ${origin}`,
-//     )
-//     fs.writeFile('exception-monitor.log',
-//         `Time: ${new Date().toString()}\n` +
-//         `Caught exception: ${err}\n` +
-//         `Exception origin: ${origin}\n`, { flag: 'a+' }, (err:any)=>{}
-//     )
-// })
 // - - -
 // moizayavki - Мои заявки
 // zayavka - Заказать со склада

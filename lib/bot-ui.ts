@@ -1,4 +1,5 @@
 import TelegramBot from 'node-telegram-bot-api'
+const fs = require('fs')
 
 // msg - used to get chatId to separate users reqests and conext between
 
@@ -11,17 +12,19 @@ export default class BotUI {
     
     // chatId specific arrays
     replyContext:any = {}
+    replyContextMsg:any = {}
     messagesToRemove:any = {}   // сообщения которые накапливаем через opt.mark_to_remove = true
     
     constructor(token:any, opt:any, events:any) {  
 
         this.events = events
         this.bot = new TelegramBot(token, opt) 
+
         // console.log(this.bot)
 
         // обработчик для любого события message, callback_query, contact и пр.
-        events.forEach((event:any)=>{
-            this.bot.on(event, async (obj:any)=>{
+        events.forEach( (event:any)=>{
+             this.bot.on(event, async (obj:any)=>{
                 
                 let callbackChatId = ''
                 if(event === 'message') callbackChatId = String(obj.chat.id)
@@ -31,9 +34,19 @@ export default class BotUI {
                 if(this.replyContext[callbackChatId] && 
                     this.replyContext[callbackChatId][event] && 
                     typeof this.replyContext[callbackChatId][event] == 'function') {
-                    // console.log('CALLED EVENТ:')
-                    // console.log(event)
-                    await this.replyContext[callbackChatId][event](obj)
+                    console.log('CALLED EVENТ:')
+                    console.log(event)
+
+                    // (async () => await this.replyContext[callbackChatId][event](obj))();
+
+                    // %%% Дбавить сюда + в text
+                    try {
+                        await this.replyContext[callbackChatId][event](obj)
+                    } catch (e) {
+                        await this.catch(this.replyContextMsg[callbackChatId], e)
+                    } 
+
+                    
                 }  
 
                 return
@@ -43,24 +56,54 @@ export default class BotUI {
 
     }
 
+
+    // ловит все ошибки, чтобы скрипт продолжал работать
+    // сохраняет все оишбки в trycatch.log'
+    async catch (msg:any, e:any) {
+        
+        fs.writeSync(
+            process.stderr.fd,
+            `Caught exception: ${e}\n`, (err:any)=>{}
+        )
+        fs.writeFile('trycatch.log',
+            `Time: ${new Date().toString()}\n` +
+            `Caught exception: ${e}\n`, { flag: 'a+' }, (err:any)=>{}
+        )
+
+        await this.message(msg, '*❗️ Произошла неизвестная ошибка!* Попробуй заново воспользоватся меню')
+    }
+
     commands (obj:any) { //user, 
         Object.keys(obj).forEach(async key => {
-                this.bot.onText(new RegExp(`\/${key}`), async (msg:any)=>{
-                    // this.lastMessage = msg
-                    // this.chatId = msg.chat.id //сохраняем каждый раз
-                    await obj[key](msg)
-                })
+            this.bot.onText(new RegExp(`\/${key}`), async (msg:any)=>{
+                // this.lastMessage = msg
+                // this.chatId = msg.chat.id //сохраняем каждый раз                
+                try {
+                    await obj[key](msg)        
+                } catch (e) {
+                    await this.catch(msg, e)
+                } 
+
+            })
         })
-         
     }
 
     // создаёт новый контекст для перехвата ответов
     async context(msg:any, question:any, replyObj:any) {
-        await question.call() 
-        // %%% - важно! не происходит перехват событий которые не были заменены в новом контексте
-        // woraround - resetContext???
-        // %%%%!!!! Clear Conntextex memory!
-        this.replyContext[msg.chat.id] = replyObj
+
+        try {
+            await question.call() 
+
+            // %%% - важно! не происходит перехват событий которые не были заменены в новом контексте
+            // woraround - resetContext???
+            // %%%%!!!! Clear Conntextex memory!
+            this.replyContext[msg.chat.id] = replyObj
+            this.replyContextMsg[msg.chat.id] = msg
+
+        } catch (e) {
+            await this.catch(msg, e)
+        } 
+        
     }
 
     // обертка для telegram sendMessage
