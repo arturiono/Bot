@@ -35,17 +35,22 @@ const SEARCH_LIMIT = 7;
 exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, function* () {
     const addedToolsMessages = {}; //ассоциативный масив key->msgId (для замены на сообщения без [Delete] btn)
     const searchResultMessages = {};
-    const cachedObject = {}; //хранит весь поиск сессии, не чистим 
+    const cachedObject = {}; //хранит весь поиск сессии
     let yesNoMsg; //confirmation сообщение для удаления
     let addedTools = c.data[msg.chat.id].tools;
     let showFoundedTool = (id, name, desc, photoUrl) => __awaiter(void 0, void 0, void 0, function* () {
+        // console.log(name)
+        // console.log(desc)
+        // console.log(photoUrl)
+        // console.log('- - -')
         const opts = {
             reply_markup: {
                 inline_keyboard: [[{ text: TX_BUTTON_ADD, callback_data: "add_" + id }]]
             },
             // mark_to_remove: true
         };
-        if (photoUrl !== '') {
+        // can be undefined!
+        if (photoUrl) {
             opts.reply_markup.inline_keyboard[0].push({ text: TX_BUTTON_PHOTO, url: photoUrl });
         }
         const nmsg = yield c.botUI.message(msg, `*${name}*\n${desc}`, opts);

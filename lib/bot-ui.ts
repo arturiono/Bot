@@ -34,13 +34,12 @@ export default class BotUI {
                 if(this.replyContext[callbackChatId] && 
                     this.replyContext[callbackChatId][event] && 
                     typeof this.replyContext[callbackChatId][event] == 'function') {
-                    console.log('CALLED EVENТ:')
-                    console.log(event)
-
-                    // (async () => await this.replyContext[callbackChatId][event](obj))();
-
-                    // %%% Дбавить сюда + в text
+                    
+                    // console.log('CALLED EVENТ:')
+                    // console.log(event)
+ 
                     try {
+                        // (async () => await this.replyContext[callbackChatId][event](obj))();
                         await this.replyContext[callbackChatId][event](obj)
                     } catch (e) {
                         await this.catch(this.replyContextMsg[callbackChatId], e)

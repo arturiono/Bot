@@ -30,12 +30,18 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
 
     const addedToolsMessages: any = {} //ассоциативный масив key->msgId (для замены на сообщения без [Delete] btn)
     const searchResultMessages: any = {}
-    const cachedObject:any = {} //хранит весь поиск сессии, не чистим 
+    const cachedObject:any = {} //хранит весь поиск сессии
     let yesNoMsg: any //confirmation сообщение для удаления
 
     let addedTools:Tools = c.data[msg.chat.id].tools
 
     let showFoundedTool = async (id:String, name:String, desc:String, photoUrl:String) => {
+
+        // console.log(name)
+        // console.log(desc)
+        // console.log(photoUrl)
+        // console.log('- - -')
+
         const opts:any = {
             reply_markup: {
                 inline_keyboard: [ [ { text: TX_BUTTON_ADD, callback_data: "add_" + id }]]
@@ -43,7 +49,8 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
             // mark_to_remove: true
         }
 
-        if(photoUrl !== '') {
+        // can be undefined!
+        if(photoUrl) {
             opts.reply_markup.inline_keyboard[0].push({ text: TX_BUTTON_PHOTO, url: photoUrl})
         }
 

@@ -14,9 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const authorize_1 = require("../authorize");
 const requestConverter_1 = require("../common/requestConverter");
-const toObject_1 = __importDefault(require("../toObject"));
-const dostavka_1 = __importDefault(require("../dostavka"));
-const dateTime_1 = __importDefault(require("../dateTime"));
 const tools_1 = __importDefault(require("../tools"));
 const comment_1 = __importDefault(require("../comment"));
 const confirm_1 = __importDefault(require("../confirm"));
@@ -99,19 +96,19 @@ exports.default = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* (
         yield (0, notify_1.default)(msg, c, TX_NEW_ZAYAVKA_MNG + (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable, true, usersTable), usersTable, null); //пишем менджеру
         yield end();
     });
-    yield (0, toObject_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
-        yield (0, dostavka_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
-            yield (0, dateTime_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
-                yield (0, tools_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
-                    yield (0, rashodniki_1.default)(msg, c, false, true, () => __awaiter(void 0, void 0, void 0, function* () {
-                        yield (0, comment_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
-                            yield (0, confirm_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
-                                yield ConfirmedByUser();
-                            }));
-                        }));
-                    }));
+    // await Object(msg, c, false, async ()=>{
+    //     await Dostavka(msg, c, false, async ()=>{
+    //         await Time(msg, c, false, async ()=>{ 
+    yield (0, tools_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, rashodniki_1.default)(msg, c, false, true, () => __awaiter(void 0, void 0, void 0, function* () {
+            yield (0, comment_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
+                yield (0, confirm_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
+                    yield ConfirmedByUser();
                 }));
             }));
         }));
     }));
+    //         })
+    //     })
+    // })
 });
