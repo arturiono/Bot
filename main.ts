@@ -1,8 +1,7 @@
-// %%% Invalid Grand Acess постоянно ломает бот через время!
-// import {updateToolsByStatus, updateRashodnikiByType} from './src/common/ABrequest' //test only
+// Логин: root
+// Пароль: nHNSsFiQZDzZvDes
 
 // Библиотеки
-// const BotUI = require('./lib/bot-ui')
 import {MainContext, Data} from './types/types'
 import BotUI from './lib/bot-ui'
 const TableUI = require('./lib/table-ui')
@@ -25,7 +24,9 @@ import Manager from './src/main/manager'
 const TX_WELLCOME_MESSAGE = "Привет! Я бот компании Naptech. *Используй меню /* для работы со мной."
 
 const SHEET_ID = '16Z6opmCk2VnXFHraYIqdGhOTT_MJtQwIRHe3KPhNys0'
-const BOTTOKEN = "6287688949:AAFalubhPUjnzkiSBb3ESxnogmlOpqpQXgc"
+// const BOTTOKEN = "6839163652:AAGNG9Uu9rrpwnil6WFMlw6tOLeITmxcRqI" //4321 bot
+const BOTTOKEN = "6287688949:AAFalubhPUjnzkiSBb3ESxnogmlOpqpQXgc" //1234 bot
+
 const OPT = {
     polling: {
         interval: 300,

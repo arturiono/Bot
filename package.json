@@ -6,8 +6,7 @@
   "scripts": {
     "typescript": "tsc -w",
     "watch node": "node --watch main.js",
-    "forever": "forever main.js",
-    "node log errors": "node > bot_log.log 2 > bot_err.log"
+    "pm2": "pm2 start main.js"
   },
   "author": "",
   "license": "ISC",

@@ -138,6 +138,7 @@ const MoiZayavki = (msg, c, page, end, newZayavkiData) => __awaiter(void 0, void
                 c.data[msg.chat.id] = (0, requestConverter_1.zayavkaToData)(val2, zayavkiData);
                 (0, edit_1.default)(msg, c, (isEdited) => __awaiter(void 0, void 0, void 0, function* () {
                     if (isEdited) {
+                        // console.log('SAVE')
                         yield (0, saveRequest_1.saveRequest)(msg, c, val1);
                         yield c.botUI.message(msg, TX_EDIT_CONFIRMED);
                         // уведомляем менеджера

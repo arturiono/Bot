@@ -164,6 +164,7 @@ const MoiZayavki = async (msg:any, c: MainContext, page: number, end:()=>any, ne
 
                 Edit(msg, c, async (isEdited:Boolean)=>{
                     if(isEdited) {
+                        // console.log('SAVE')
                         await saveRequest(msg, c, val1)
                         await c.botUI.message(msg, TX_EDIT_CONFIRMED)
                         // уведомляем менеджера

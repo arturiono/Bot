@@ -173,6 +173,10 @@ function saveRequest(msg, c, requestId, onlyStatus) {
             id = requestId;
         // Запись данных в таблицу из data
         let obj;
+        // Удалить поле внутренее поле reserved при сохранении (при загрузке это поле будет автоматически заполнено)
+        for (const id in newRequest.rashodniki) {
+            delete newRequest.rashodniki[id].reserved;
+        }
         if (!onlyStatus)
             obj = {
                 '#': id,

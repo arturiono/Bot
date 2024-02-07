@@ -59,7 +59,8 @@ export function dataToMessage (data:ABReqest, objectTable:any, showName?:boolean
         if(Object.values(data.rashodniki).length !==0)    
             str += 'Расходники: *' + Object.values(data.rashodniki).map(function(item:any, index:any) {
                 const space = index === 0? '' : ' ' 
-                return space + item.name + ' - ' + item.count + ' ' + item.units
+                const over = item.over > 0 ? ': ☝️докупка ' + item.over + ' ' + item.units + ' ' : ''
+                return space + item.name + ' - ' + (item.count + item.over) + ' ' + item.units + over
             }) + '*\n'
     }
 
@@ -91,6 +92,14 @@ export function zayavkaToData(i: number, allZayavkiObj: any) {
         rashodniki: JSON.parse(allZayavkiObj['Расходники'][i]),
         comment: allZayavkiObj['Комментарий'][i]
     }
+
+    // записываем поле reserved при первичной конвертации
+    for (const id in data.rashodniki) {
+        //reseved - это сохраненное количество на сервере, далее count может менятся при редактировании заявки
+        data.rashodniki[id].reserved = data.rashodniki[id].count
+    }
+
+    // console.log(data.rashodniki)
 
     // ['#', 'Тип', 'Доставка', 'Ожидаемая дата/время', 'Статус', 'Cотрудник', 'Объект A', 'Объект B', 'Инструмент', 'Расходники', 'Комментарий', 'Дата созд.', 'Дата изм.'],
     // %% записать сюда данные обратно с заявки

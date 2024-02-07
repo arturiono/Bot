@@ -18,7 +18,7 @@ const TX_BACK_MESSAGE = 'Для возврата к выбору категор�
 const TX_BUTTON_END = "Закончить добавление >>";
 const TX_BUTTON_EDIT_END = "Закончить редактирование >>";
 const TX_BUTTON_BACK = '<< Вернутся в категории';
-const TX_MATERIAL = 'Расходники: ';
+// const TX_MATERIAL = 'Расходники: '
 const TX_EXISTS = ' уже в списоке';
 const TX_END_CONFIRM_REQUEST = "Расходники не добавлены. Оставить заявку без расходников?";
 const TX_BUTTON_CONFIRM = 'Да';
@@ -32,11 +32,14 @@ const TX_END_NOT_CONFIRMED = "Продолжим добавление";
 //         // prevReplyMarkup: any
 //     }
 //  } 
+// кэшированные расходники (глобально для всех)
 let addedRashodnikiMsgIds = {};
 let MRashodniki = (msg, c, editMode, showInitialMessage, end) => __awaiter(void 0, void 0, void 0, function* () {
     addedRashodnikiMsgIds[msg.chat.id] = addedRashodnikiMsgIds[msg.chat.id] !== undefined ? addedRashodnikiMsgIds[msg.chat.id] : {};
     const addedRashodniki = c.data[msg.chat.id].rashodniki;
     let yesNoMsg; //сообщение для удаления
+    const Table = yield c.tableUI.getList('Расходники', ['Auto #', 'Количество', 'Измерение', 'Категория', 'Название', 'Вариант']);
+    // console.log(Table)
     // msgId - если хотим заменить добавляем этот параметр
     let showRashodnikMessage = (id, update, endedEditMode) => __awaiter(void 0, void 0, void 0, function* () {
         let msgId;
@@ -45,32 +48,36 @@ let MRashodniki = (msg, c, editMode, showInitialMessage, end) => __awaiter(void 
         const indx = Table['Auto #'].indexOf(id);
         const buttons = [];
         if (!endedEditMode) {
-            if (addedRashodniki[id].count - 1 > 0)
+            // Удалены все ограничения после кейса, что пользователю нужно
+            // иметь возможность заказть больше расходников, чем есть на складе (докупка по пути)
+            if (addedRashodniki[id].count + addedRashodniki[id].over - 1 > 0)
                 buttons.push({ text: '-1', callback_data: id + '_' + '-1' });
             else
                 buttons.push({ text: ' ', callback_data: id + '_' + 'null' });
-            if (addedRashodniki[id].count - 5 > 0)
+            if (addedRashodniki[id].count + addedRashodniki[id].over - 5 > 0)
                 buttons.push({ text: '-5', callback_data: id + '_' + '-5' });
             else
                 buttons.push({ text: ' ', callback_data: id + '_' + 'null' });
             buttons.push({ text: 'Удалить', callback_data: id + '_' + 'del' });
-            if (addedRashodniki[id].count + 5 <= Table['Количество'][indx])
-                buttons.push({ text: '+5', callback_data: id + '_' + '+5' });
-            else
-                buttons.push({ text: ' ', callback_data: id + '_' + 'null' });
-            if (addedRashodniki[id].count + 1 <= Table['Количество'][indx])
-                buttons.push({ text: '+1', callback_data: id + '_' + '+1' });
-            else
-                buttons.push({ text: ' ', callback_data: id + '_' + 'null' });
+            // if (addedRashodniki[id].count + 5 <= Table['Количество'][indx])
+            buttons.push({ text: '+5', callback_data: id + '_' + '+5' });
+            // else buttons.push({text: ' ', callback_data: id + '_' + 'null'})
+            // if (addedRashodniki[id].count + 1 <= Table['Количество'][indx])
+            buttons.push({ text: '+1', callback_data: id + '_' + '+1' });
+            // else buttons.push({text: ' ', callback_data: id + '_' + 'null'})
         }
         const opts = {
             reply_markup: {
                 inline_keyboard: [buttons]
             }
         };
-        const cntx = !endedEditMode ? ' (' + Table['Количество'][indx] + ' ' + Table['Измерение'][indx] + ')' : '';
-        const tx = TX_MATERIAL + '*' + addedRashodniki[id].name + ' - ' + addedRashodniki[id].count + ' ' + Table['Измерение'][indx] + '*'
-            + cntx;
+        const availible = Number(Table['Количество'][indx]) + addedRashodniki[id].reserved;
+        const overuse = addedRashodniki[id].over;
+        const cntx = !endedEditMode ? ' (в наличии ' + availible + ' ' + Table['Измерение'][indx] + ')' : '';
+        const warning = overuse > 0 ? '\n☝️ нужна докупка: ' + overuse + ' ' + Table['Измерение'][indx] : '';
+        const count = '\n► *' + (addedRashodniki[id].count + addedRashodniki[id].over) + ' ' + Table['Измерение'][indx] + '* ' + cntx;
+        const name = '*' + addedRashodniki[id].name + '*';
+        const tx = name + count + warning;
         if (update) {
             yield c.botUI.editMessage(msg, msgId, tx, opts);
         }
@@ -126,6 +133,29 @@ let MRashodniki = (msg, c, editMode, showInitialMessage, end) => __awaiter(void 
         c.botUI.delete(msg, yesNoMsg.message_id);
         yield c.botUI.message(msg, TX_END_NOT_CONFIRMED, { mark_to_remove: true });
     });
+    const operationAdd = (id, v) => {
+        const indx = Table['Auto #'].indexOf(id);
+        // console.log(addedRashodniki[id])
+        // при первичной заявке reserved = 0
+        const availible = Number(Table['Количество'][indx]) + addedRashodniki[id].reserved;
+        // всего сейчас заказано пользователем
+        const total = addedRashodniki[id].over + addedRashodniki[id].count;
+        // console.log('total', total)
+        // console.log('availible', availible)
+        // если перерасход
+        if (total + v >= availible) {
+            addedRashodniki[id].count = availible;
+            addedRashodniki[id].over = (total + v) - availible;
+            // нет перерасхода
+        }
+        else {
+            addedRashodniki[id].count = total + v;
+            addedRashodniki[id].over = 0;
+        }
+        // console.log(addedRashodniki[id].count)
+        // console.log(addedRashodniki[id].over
+        // console.log('- - -')
+    };
     // ### логика обработки расходника используется в двух местах
     const callbackRashodnikControls = (data) => __awaiter(void 0, void 0, void 0, function* () {
         let updateRashodnikiMsg = (id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -136,19 +166,19 @@ let MRashodniki = (msg, c, editMode, showInitialMessage, end) => __awaiter(void 
         // console.log(op)
         // console.log(id)
         if (op === '+1') {
-            addedRashodniki[id].count = addedRashodniki[id].count + 1;
+            operationAdd(id, 1);
             updateRashodnikiMsg(id);
         }
         else if (op === '+5') {
-            addedRashodniki[id].count = addedRashodniki[id].count + 5;
+            operationAdd(id, 5);
             updateRashodnikiMsg(id);
         }
         else if (op === '-1') {
-            addedRashodniki[id].count = addedRashodniki[id].count - 1;
+            operationAdd(id, -1);
             updateRashodnikiMsg(id);
         }
         else if (op === '-5') {
-            addedRashodniki[id].count = addedRashodniki[id].count - 5;
+            operationAdd(id, -5);
             updateRashodnikiMsg(id);
         }
         else if (op === 'del') {
@@ -156,12 +186,7 @@ let MRashodniki = (msg, c, editMode, showInitialMessage, end) => __awaiter(void 
             delete addedRashodniki[id];
             delete addedRashodnikiMsgIds[msg.chat.id][id];
         }
-        // console.log(query.data.split('_')[0])
-        // console.log(query.data.split('_')[1])
-        // console.log('- - -')
     });
-    const Table = yield c.tableUI.getList('Расходники', ['Auto #', 'Количество', 'Измерение', 'Категория', 'Название', 'Вариант']);
-    // console.log(Table)
     c.botUI.context(msg, () => __awaiter(void 0, void 0, void 0, function* () {
         const buttons = [];
         const existCategories = {};
@@ -229,27 +254,27 @@ let MRashodniki = (msg, c, editMode, showInitialMessage, end) => __awaiter(void 
                     // %%% тут
                     Table['Название'].forEach((el, i) => {
                         if (Table['Категория'][i] === Category) {
-                            if (Table['Количество'][i] !== '0') { //если не 0
-                                let firstTime = false;
-                                if (!List[el]) {
-                                    List[el] = [];
-                                    firstTime = true;
-                                }
-                                if (Table['Вариант'][i] !== '' && Table['Вариант'][i] !== ' ' && Table['Вариант'][i] !== undefined)
-                                    List[el].push({
-                                        name: Table['Вариант'][i],
-                                        id: Table['Auto #'][i],
-                                        count: Table['Количество'][i],
-                                        items: Table['Измерение'][i],
-                                    });
-                                else if (firstTime) //нет вариантов у расходника
-                                    List[el].push({
-                                        name: Table['Название'][i],
-                                        id: Table['Auto #'][i],
-                                        count: Table['Количество'][i],
-                                        items: Table['Измерение'][i],
-                                    });
+                            // if(Table['Количество'][i] !== '0') { //если не 0 //убрали для возможности overuse
+                            let firstTime = false;
+                            if (!List[el]) {
+                                List[el] = [];
+                                firstTime = true;
                             }
+                            if (Table['Вариант'][i] !== '' && Table['Вариант'][i] !== ' ' && Table['Вариант'][i] !== undefined)
+                                List[el].push({
+                                    name: Table['Вариант'][i],
+                                    id: Table['Auto #'][i],
+                                    count: Table['Количество'][i],
+                                    items: Table['Измерение'][i],
+                                });
+                            else if (firstTime) //нет вариантов у расходника
+                                List[el].push({
+                                    name: Table['Название'][i],
+                                    id: Table['Auto #'][i],
+                                    count: Table['Количество'][i],
+                                    items: Table['Измерение'][i],
+                                });
+                            // }
                         }
                     });
                     for (let el in List) {
@@ -297,13 +322,21 @@ let MRashodniki = (msg, c, editMode, showInitialMessage, end) => __awaiter(void 
                             // пришел ID для добавления (первый раз)
                         }
                         else {
-                            const indx = Table['Auto #'].indexOf(query.data);
-                            if (addedRashodniki[query.data] === undefined) {
+                            const id = query.data;
+                            const indx = Table['Auto #'].indexOf(id);
+                            if (addedRashodniki[id] === undefined) {
                                 let name = Table['Название'][indx];
                                 if (Table['Вариант'][indx] !== '' && Table['Вариант'][indx] !== undefined)
                                     name += ' (' + Table['Вариант'][indx] + ')';
-                                addedRashodniki[query.data] = { name: name, count: 1, units: Table['Измерение'][indx] };
-                                showRashodnikMessage(query.data);
+                                addedRashodniki[id] = {
+                                    name: name,
+                                    count: 0,
+                                    over: 0,
+                                    reserved: 0,
+                                    units: Table['Измерение'][indx]
+                                };
+                                operationAdd(id, 1);
+                                showRashodnikMessage(id);
                             }
                             else {
                                 yield c.botUI.message(msg, Table['Название'][indx] + TX_EXISTS, { mark_to_remove: true });

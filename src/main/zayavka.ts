@@ -18,8 +18,11 @@ const TX_NEW_ZAYAVKA_MNG = "✅ 🔜🏢 Поступила заявка пол�
 const TX_REQEST_CONFIRMED = "✅ *Заявка получения со склада принята*. Информация о готовности будет поступать в этот чат.\nдля управления зявками используйте раздел меню /moizayavki";
 const TX_INITIAL_MESSAGE = "*Заявка получения со склада*"
 
-const TX_CONFLICT = "*❗️Произошел конфликт заказа*. Другой сотрудник уже заказал выбранный вами инструемент. \n" + 
-                    "*Инструмент и/или расходники были изменены*. Внимательно посмотртите на изменения в заказе."
+const TX_CONFLICT_TOOLS = "*❗️Произошел конфликт инмтрумента*. Другой сотрудник уже заказал выбранный вами инструемент. \n" + 
+                    "Посмотртите на изменения в инструменте."
+const TX_CONFLICT_RASHODNIKI = "*❗️Произошел конфликт расходников*. Кто-то уже заказал часть расходников \n" + 
+                    "Посмотртите на изменения в расходниках."
+
 
 export default async (msg:any, c: MainContext, end:()=>any) => {
 
@@ -48,7 +51,9 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
         const toolsData = await c.tableUI.getList('Инструмент', 
         ['Auto #', 'Статус' , 'Наименование', 'Описание', 'Объект', 'Местонахождение', 'Ответсвенный', 'Сотрудник', 'Заявка'])
         
-        let conflicted = false
+        let conflictTool = false
+        let conflictRash = false 
+
         for (const toolId in c.data[msg.chat.id].tools) {
 
             const ind = toolsData['Auto #'].indexOf(toolId)
@@ -57,7 +62,7 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
                 'Уже заброниравал: ' + toolsData['Ответсвенный'][ind]
 
                 await c.botUI.message(msg, tx)
-                conflicted = true
+                conflictTool = true
 
                 // удаляем из списка
                 delete c.data[msg.chat.id].tools[toolId]
@@ -83,18 +88,25 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
 
                     const newCount = c.data[msg.chat.id].rashodniki[toolId].count + dif
                     c.data[msg.chat.id].rashodniki[toolId].count = newCount //минимальное значение - 0
-                    if(newCount === 0) {
-                        delete c.data[msg.chat.id].rashodniki[toolId]
-                    }
 
-                    conflicted = true
+                    // Записываем в перерасход конфликтный инструмент
+                    c.data[msg.chat.id].rashodniki[toolId].over += -dif
+
+                    // if(newCount === 0 && c.data[msg.chat.id].rashodniki[toolId].over) {
+                    //     delete c.data[msg.chat.id].rashodniki[toolId]
+                    // }
+
+                    conflictRash = true
                 }
             }
             
         }
 
-        if (conflicted) {
-            await c.botUI.message(msg, TX_CONFLICT) 
+        if(conflictTool) await c.botUI.message(msg, TX_CONFLICT_TOOLS) 
+        if(conflictRash) await c.botUI.message(msg, TX_CONFLICT_RASHODNIKI) 
+
+        if (conflictTool || conflictRash) {
+            // await c.botUI.message(msg, TX_CONFLICT) 
 
             // снова показываем confirmed и рекурсивно вызывает эту функцию
             await Confirm(msg, c, async ()=>{ 
@@ -122,7 +134,7 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
     // await Object(msg, c, false, async ()=>{
     //     await Dostavka(msg, c, false, async ()=>{
     //         await Time(msg, c, false, async ()=>{ 
-                await Tools(msg, c, false, async ()=>{  // расходники за инструментом
+                // await Tools(msg, c, false, async ()=>{  // расходники за инструментом
                     await Rashodniki(msg, c, false, true, async ()=>{
                         await Comment(msg, c, false, async ()=>{  
                             await Confirm(msg, c, async ()=>{ 
@@ -130,7 +142,7 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
                             }) 
                         })
                     })
-                })
+                // })
     //         })
     //     })
     // })
