@@ -131,10 +131,10 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
         await end()
     }
 
-    // await Object(msg, c, false, async ()=>{
-    //     await Dostavka(msg, c, false, async ()=>{
-    //         await Time(msg, c, false, async ()=>{ 
-                // await Tools(msg, c, false, async ()=>{  // расходники за инструментом
+    await Object(msg, c, false, async ()=>{
+        await Dostavka(msg, c, false, async ()=>{
+            await Time(msg, c, false, async ()=>{ 
+                await Tools(msg, c, false, async ()=>{  // расходники за инструментом
                     await Rashodniki(msg, c, false, true, async ()=>{
                         await Comment(msg, c, false, async ()=>{  
                             await Confirm(msg, c, async ()=>{ 
@@ -142,9 +142,9 @@ export default async (msg:any, c: MainContext, end:()=>any) => {
                             }) 
                         })
                     })
-                // })
-    //         })
-    //     })
-    // })
+                })
+            })
+        })
+    })
 
 }

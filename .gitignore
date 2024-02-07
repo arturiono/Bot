@@ -1,5 +1,6 @@
 # ignore all directories with the name test
 auth-users/*
+node_modules
 
 # ignore server logs
 trycatch.log

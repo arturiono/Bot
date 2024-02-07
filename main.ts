@@ -1,5 +1,6 @@
 // Логин: root
 // Пароль: nHNSsFiQZDzZvDes
+// 89.104.68.34
 
 // Библиотеки
 import {MainContext, Data} from './types/types'
