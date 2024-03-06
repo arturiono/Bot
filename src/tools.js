@@ -30,8 +30,8 @@ const TX_BUTTON_CONFIRM = 'Да';
 const TX_BUTTON_NOT_CONFIRM = 'Нет';
 const TX_END_CONFIRMED = "Понял, *продолжаем без инструмента*";
 const TX_END_NOT_CONFIRMED = "Продолжим добавление";
-// ограничить вывод поиска до 7 шт
-const SEARCH_LIMIT = 7;
+// ограничить вывод поиска до (шт)
+const SEARCH_LIMIT = 6;
 exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, function* () {
     const addedToolsMessages = {}; //ассоциативный масив key->msgId (для замены на сообщения без [Delete] btn)
     const searchResultMessages = {};
@@ -117,13 +117,12 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
                 let cur_i = 0;
                 for (let i = 0; i < searchRes.length; i++) {
                     const o = searchRes[i];
-                    if (cur_i >= SEARCH_LIMIT)
-                        return;
                     // показываем только те, которые не добавлены
-                    if (addedTools && !addedTools[String(o.id)]) {
-                        yield showFoundedTool(o.id, o.name, o.desc, o.url);
-                        cur_i++;
-                    }
+                    if (cur_i < SEARCH_LIMIT)
+                        if (addedTools && !addedTools[String(o.id)]) {
+                            yield showFoundedTool(o.id, o.name, o.desc, o.url);
+                            cur_i++;
+                        }
                 }
                 yield c.botUI.message(msg, TX_FOUND_1 + cur_i + TX_FOUND_2 + SEARCH_LIMIT + TX_FOUND_3, { mark_to_remove: true });
             }

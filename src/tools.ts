@@ -23,8 +23,8 @@ const TX_BUTTON_NOT_CONFIRM = 'Нет'
 const TX_END_CONFIRMED = "Понял, *продолжаем без инструмента*"
 const TX_END_NOT_CONFIRMED = "Продолжим добавление"
 
-// ограничить вывод поиска до 7 шт
-const SEARCH_LIMIT = 7
+// ограничить вывод поиска до (шт)
+const SEARCH_LIMIT = 6
 
 export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) => {
 
@@ -54,7 +54,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
             opts.reply_markup.inline_keyboard[0].push({ text: TX_BUTTON_PHOTO, url: photoUrl})
         }
 
-        const nmsg = await c.botUI.message(msg, `*${name}*\n${desc}`, opts)
+        const nmsg = await c.botUI.message(msg, `*${desc}*\n${name}`, opts)
         searchResultMessages[String(id)] = nmsg.message_id
         cachedObject[String(id)] = {name: name, desc: desc}
     }
@@ -65,8 +65,8 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                 inline_keyboard: [ [ { text: TX_BUTTON_DELETE, callback_data: "delete_" + id }] ]
             }
         }
-        const nmsg = await c.botUI.message(msg, TX_TOOL + '*' + name + '*' + 
-        '\n' + desc, opts)
+        const nmsg = await c.botUI.message(msg, TX_TOOL + '*' + desc + '*' + 
+        '\n' + name, opts)
         // добавляем с возможностью будущего удаления
         addedToolsMessages[String(id)] = nmsg.message_id 
     }
@@ -139,13 +139,13 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                 for (let i = 0; i < searchRes.length; i++) {
                     
                     const o = searchRes[i]
-                    if (cur_i >= SEARCH_LIMIT) return 
 
                     // показываем только те, которые не добавлены
-                    if (addedTools && !addedTools[String(o.id)]) {
-                        await showFoundedTool(o.id, o.name, o.desc, o.url)
-                        cur_i ++
-                    }
+                    if (cur_i < SEARCH_LIMIT)
+                        if (addedTools && !addedTools[String(o.id)]) {
+                            await showFoundedTool(o.id, o.name, o.desc, o.url)
+                            cur_i ++
+                        }
                     
                 }
 
@@ -181,8 +181,8 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                     // заменяем все добавленные на сообщения без кнопки
                     for (const id in addedToolsMessages) {
                         c.botUI.delete(msg, addedToolsMessages[id])
-                        await c.botUI.message(msg, TX_TOOL + '*' + cachedObject[id].name + '*' + 
-                        '\n' + cachedObject[id].desc)
+                        await c.botUI.message(msg, TX_TOOL + '*' + cachedObject[id].desc + '*' + 
+                        '\n' + cachedObject[id].name)
                     }
 
                     await end()
@@ -214,7 +214,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                     //     await c.botUI.message(msg, cachedObject[id].name + TX_EXISTS_2, {mark_to_remove: true})
                     // } else {
                         await showAddedTool(id, cachedObject[id].name, cachedObject[id].desc)
-                        addedTools[id] = cachedObject[id].name + ' (' + cachedObject[id].desc + ')'
+                        addedTools[id] = cachedObject[id].desc + ' (' + cachedObject[id].name + ')'
 
                         await c.botUI.delete(msg, searchResultMessages[id])
                         delete searchResultMessages[id] 

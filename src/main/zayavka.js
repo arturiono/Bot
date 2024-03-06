@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const authorize_1 = require("../authorize");
 const requestConverter_1 = require("../common/requestConverter");
+const tools_1 = __importDefault(require("../tools"));
 const comment_1 = __importDefault(require("../comment"));
 const confirm_1 = __importDefault(require("../confirm"));
 const rashodniki_1 = __importDefault(require("../rashodniki"));
@@ -107,15 +108,15 @@ exports.default = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* (
     // await Object(msg, c, false, async ()=>{
     //     await Dostavka(msg, c, false, async ()=>{
     //         await Time(msg, c, false, async ()=>{ 
-    // await Tools(msg, c, false, async ()=>{  // расходники за инструментом
-    yield (0, rashodniki_1.default)(msg, c, false, true, () => __awaiter(void 0, void 0, void 0, function* () {
-        yield (0, comment_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
-            yield (0, confirm_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
-                yield ConfirmedByUser();
+    yield (0, tools_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, rashodniki_1.default)(msg, c, false, true, () => __awaiter(void 0, void 0, void 0, function* () {
+            yield (0, comment_1.default)(msg, c, false, () => __awaiter(void 0, void 0, void 0, function* () {
+                yield (0, confirm_1.default)(msg, c, () => __awaiter(void 0, void 0, void 0, function* () {
+                    yield ConfirmedByUser();
+                }));
             }));
         }));
     }));
-    // })
     //         })
     //     })
     // })

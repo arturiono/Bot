@@ -4,9 +4,10 @@
   "description": "Бот для учета ТМЦ",
   "main": "main.js",
   "scripts": {
-    "typescript": "tsc -w",
-    "watch node": "node --watch main.js",
-    "pm2": "pm2 start main.js"
+    "1) Typescript watch": "tsc -w",
+    "2) Node локально watch": "node --watch main.js",
+    "(пример) Запуск на сервере ": "pm2 start bot.js",
+    "(bot.js) Сборка для сервера": "esbuild main.js --bundle --platform=node --packages=external --outfile=bot.js"
   },
   "author": "",
   "license": "ISC",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@types/node-telegram-bot-api": "^0.61.6",
+    "esbuild": "0.20.1",
     "typescript": "^5.1.6"
   }
 }
