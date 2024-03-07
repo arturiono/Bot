@@ -32,12 +32,12 @@ const namne_1 = __importDefault(require("./src/main/namne"));
 const manager_1 = __importDefault(require("./src/main/manager"));
 const TX_WELLCOME_MESSAGE = "Привет! Я бот компании Naptech. *Используй меню /* для работы со мной.";
 //inarty. БД. Каталог (разработка бота)
-// const SHEET_ID = '16Z6opmCk2VnXFHraYIqdGhOTT_MJtQwIRHe3KPhNys0' 
+const SHEET_ID = '16Z6opmCk2VnXFHraYIqdGhOTT_MJtQwIRHe3KPhNys0';
 // k1Pro. Бот. Учет ТМЦ. Склад. НапТех
-const SHEET_ID = '12LFi9eXfizondNQgE7sBqrMr78Mt6pRnz8Jbuhzv14k';
-// const BOTTOKEN = "6839163652:AAGNG9Uu9rrpwnil6WFMlw6tOLeITmxcRqI" //4321 bot
+// const SHEET_ID = '12LFi9eXfizondNQgE7sBqrMr78Mt6pRnz8Jbuhzv14k' 
+const BOTTOKEN = "6839163652:AAGNG9Uu9rrpwnil6WFMlw6tOLeITmxcRqI"; //4321 bot
 // const BOTTOKEN = "6287688949:AAFalubhPUjnzkiSBb3ESxnogmlOpqpQXgc" //1234 bot
-const BOTTOKEN = "6511717620:AAGImOYrSujIshw-T5qu6CdBnhaP91nSFlY"; // k1Pro
+// const BOTTOKEN = "6511717620:AAGImOYrSujIshw-T5qu6CdBnhaP91nSFlY" // k1Pro
 const OPT = {
     polling: {
         interval: 300,
@@ -49,7 +49,7 @@ const OPT = {
 };
 const EVENTS = ['message', 'callback_query', 'contact'];
 const TABLE_MODEL = {
-    'Обьекты': ['Auto #', 'Название', 'Статус', 'Cотрудник'],
+    'Объекты': ['Auto #', 'Название', 'Статус', 'Cотрудник'],
     'Сотрудники': ['#', 'ФИО', 'Роль', 'Должность', 'Username', 'ChatId'],
     'Инструмент': ['Auto #', 'Статус', 'Доступность', 'Наименование', 'Описание', 'Фото', 'Местонахождение', 'Ответсвенный', 'Сотрудник', 'Объект', 'Заявка', 'Место'],
     'Расходники': ['Auto #', 'Количество', 'Измерение', 'Категория', 'Название', 'Вариант', 'Фото', 'Место'],

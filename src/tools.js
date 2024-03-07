@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const search_1 = require("./common/search");
+const LINK_TABLE = 'https://docs.google.com/spreadsheets/d/12LFi9eXfizondNQgE7sBqrMr78Mt6pRnz8Jbuhzv14k/edit?usp=sharing';
 const TX_INITIAL_MESSAGE = '*Добавление инструмента*:';
 const TX_SEARCH_MESSAGE = 'Для 🔎 поиска и добавления *пиши поисковый запрос в сообщении*';
 const TX_INITIAL_MESSAGE_EDIT = '*Редактирование инструмента*:';
@@ -24,7 +25,7 @@ const TX_BUTTON_EDIT_END = "Закончить редактирование >>";
 const TX_FOUND_1 = 'Найдено ';
 const TX_FOUND_2 = ' (лимит ';
 const TX_FOUND_3 = ')';
-const TX_TOOL = 'Инсрумент: ';
+const TX_TOOL = 'Добавлено: ';
 const TX_END_CONFIRM_REQUEST = "Инструмент не добавлен. Оставить заявку без инструмента?";
 const TX_BUTTON_CONFIRM = 'Да';
 const TX_BUTTON_NOT_CONFIRM = 'Нет';
@@ -53,7 +54,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
         if (photoUrl) {
             opts.reply_markup.inline_keyboard[0].push({ text: TX_BUTTON_PHOTO, url: photoUrl });
         }
-        const nmsg = yield c.botUI.message(msg, `*${name}*\n${desc}`, opts);
+        const nmsg = yield c.botUI.message(msg, `*${desc}*\n${name}`, opts);
         searchResultMessages[String(id)] = nmsg.message_id;
         cachedObject[String(id)] = { name: name, desc: desc };
     });
@@ -63,8 +64,8 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
                 inline_keyboard: [[{ text: TX_BUTTON_DELETE, callback_data: "delete_" + id }]]
             }
         };
-        const nmsg = yield c.botUI.message(msg, TX_TOOL + '*' + name + '*' +
-            '\n' + desc, opts);
+        const nmsg = yield c.botUI.message(msg, TX_TOOL + '*' + desc + '*' +
+            '\n' + name, opts);
         // добавляем с возможностью будущего удаления
         addedToolsMessages[String(id)] = nmsg.message_id;
     });
@@ -72,7 +73,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
         const endOpts = {
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: TX_BUTTON_TOOLS_LIST, url: 'https://docs.google.com/spreadsheets/d/16Z6opmCk2VnXFHraYIqdGhOTT_MJtQwIRHe3KPhNys0/edit?usp=sharing' }],
+                    [{ text: TX_BUTTON_TOOLS_LIST, url: LINK_TABLE }],
                     [{ text: editMode ? TX_BUTTON_EDIT_END : TX_BUTTON_END, callback_data: 'end' }]
                 ]
             },
@@ -150,8 +151,8 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
                     // заменяем все добавленные на сообщения без кнопки
                     for (const id in addedToolsMessages) {
                         c.botUI.delete(msg, addedToolsMessages[id]);
-                        yield c.botUI.message(msg, TX_TOOL + '*' + cachedObject[id].name + '*' +
-                            '\n' + cachedObject[id].desc);
+                        yield c.botUI.message(msg, TX_TOOL + '*' + cachedObject[id].desc + '*' +
+                            '\n' + cachedObject[id].name);
                     }
                     yield end();
                 }
@@ -180,7 +181,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
                     //     await c.botUI.message(msg, cachedObject[id].name + TX_EXISTS_2, {mark_to_remove: true})
                     // } else {
                     yield showAddedTool(id, cachedObject[id].name, cachedObject[id].desc);
-                    addedTools[id] = cachedObject[id].name + ' (' + cachedObject[id].desc + ')';
+                    addedTools[id] = cachedObject[id].desc + ' (' + cachedObject[id].name + ')';
                     yield c.botUI.delete(msg, searchResultMessages[id]);
                     delete searchResultMessages[id];
                     // }  

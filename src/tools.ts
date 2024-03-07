@@ -1,6 +1,8 @@
 import {MainContext, Tools} from '../types/types'
 import {SearchToolsByStr, GetToolsByIds} from './common/search'
 
+const LINK_TABLE = 'https://docs.google.com/spreadsheets/d/12LFi9eXfizondNQgE7sBqrMr78Mt6pRnz8Jbuhzv14k/edit?usp=sharing'
+
 const TX_INITIAL_MESSAGE = '*Добавление инструмента*:'
 const TX_SEARCH_MESSAGE = 'Для 🔎 поиска и добавления *пиши поисковый запрос в сообщении*'
 const TX_INITIAL_MESSAGE_EDIT = '*Редактирование инструмента*:'
@@ -15,7 +17,7 @@ const TX_BUTTON_EDIT_END = "Закончить редактирование >>"
 const TX_FOUND_1 = 'Найдено '
 const TX_FOUND_2 = ' (лимит '
 const TX_FOUND_3 = ')'
-const TX_TOOL = 'Инсрумент: '
+const TX_TOOL = 'Добавлено: '
 
 const TX_END_CONFIRM_REQUEST = "Инструмент не добавлен. Оставить заявку без инструмента?"
 const TX_BUTTON_CONFIRM = 'Да'
@@ -76,7 +78,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
         const endOpts = {
             reply_markup: {
                 inline_keyboard: [  
-                    [ { text: TX_BUTTON_TOOLS_LIST , url: 'https://docs.google.com/spreadsheets/d/16Z6opmCk2VnXFHraYIqdGhOTT_MJtQwIRHe3KPhNys0/edit?usp=sharing' }],
+                    [ { text: TX_BUTTON_TOOLS_LIST , url: LINK_TABLE }],
                     [ { text: editMode? TX_BUTTON_EDIT_END : TX_BUTTON_END, callback_data: 'end' }]                       
                 ]
             },
