@@ -15,7 +15,7 @@ const TX_BTN_SELF_ZABERU = 'Заберу сам';
 const TX_BTN_SELF_PRIVESU = 'Без доставки';
 const TX_BTN_DELIVERY = 'Нужна доставка';
 const TX_SUCESS_DELIVERY = 'Понял, *привезем*';
-const TX_SUCESS_SELF = 'Понял, *заберешь сам*';
+const TX_SUCESS_SELF = 'Понял, *самовывоз*';
 // Сценарий выбора точки назначения
 exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, function* () {
     let delMsg;

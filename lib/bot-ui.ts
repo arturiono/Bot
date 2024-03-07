@@ -72,7 +72,7 @@ export default class BotUI {
         await this.message(msg, '*❗️ Произошла неизвестная ошибка!* Попробуй заново воспользоватся меню')
     }
 
-    commands (obj:any) { //user, 
+    commands (obj:any) { //user,
         Object.keys(obj).forEach(async key => {
             this.bot.onText(new RegExp(`\/${key}`), async (msg:any)=>{
                 // this.lastMessage = msg

@@ -6,7 +6,7 @@ const TX_BTN_SELF_ZABERU = 'Заберу сам'
 const TX_BTN_SELF_PRIVESU = 'Без доставки'
 const TX_BTN_DELIVERY = 'Нужна доставка'
 const TX_SUCESS_DELIVERY = 'Понял, *привезем*'
-const TX_SUCESS_SELF = 'Понял, *заберешь сам*'
+const TX_SUCESS_SELF = 'Понял, *самовывоз*'
 
 // Сценарий выбора точки назначения
 export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) => {
