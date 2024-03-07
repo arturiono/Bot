@@ -62,7 +62,7 @@ const Manager = (msg, c, end, cashedData) => __awaiter(void 0, void 0, void 0, f
         usersTable = yield c.tableUI.getList('Сотрудники', [
             '#', 'ФИО', 'Роль', 'ChatId'
         ]);
-        objectsTable = yield c.tableUI.getList('Обьекты', ['Auto #', 'Название']);
+        objectsTable = yield c.tableUI.getList('Объекты', ['Auto #', 'Название']);
         newCashedData = {
             zayavkiTable,
             usersTable,

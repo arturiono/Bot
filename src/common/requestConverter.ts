@@ -3,7 +3,7 @@ import {MainContext, ABReqest} from '../../types/types'
 // usersTable - данные о имени сотрудника
 export function dataToMessage (data:ABReqest, objectTable:any, showName?:boolean, usersTable?:any) {
 
-    // %%% Получить 'Обьекты' для вывода названия Обьектов
+    // %%% Получить 'Объекты' для вывода названия Обьектов
 
     let str = ''
 

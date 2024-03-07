@@ -31,7 +31,7 @@ const TX_CONFLICT_TOOLS = "*❗️Произошел конфликт инмтр
 const TX_CONFLICT_RASHODNIKI = "*❗️Произошел конфликт расходников*. Кто-то уже заказал часть расходников \n" +
     "Посмотртите на изменения в расходниках.";
 exports.default = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* () {
-    const objectsTable = yield c.tableUI.getList('Обьекты', ['Auto #', 'Название']);
+    const objectsTable = yield c.tableUI.getList('Объекты', ['Auto #', 'Название']);
     yield c.botUI.message(msg, TX_INITIAL_MESSAGE);
     c.data[msg.chat.id] = {
         id: 'Null',

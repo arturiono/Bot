@@ -39,7 +39,7 @@ const TX_BUTTON_SAVE = "Подтвердить"
 
 const Edit = async (msg:any, c: MainContext, end:(wasEdited:Boolean)=>any, editingHappen:Boolean, usersTable?:any ) => {
 
-    const objectsTable = await c.tableUI.getList('Обьекты', ['Auto #', 'Название'])
+    const objectsTable = await c.tableUI.getList('Объекты', ['Auto #', 'Название'])
 
     let nmsg:any
     let showZayavka = async ()=> {

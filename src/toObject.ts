@@ -21,7 +21,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
     //ассоциативный масив для кэшироания сообщений, чтобы потом удалить при удвлении
     const messagesIds:any = {}
 
-    const objTable = await c.tableUI.getList('Обьекты',['Auto #', 'Название', 'Статус', 'Cотрудник'])
+    const objTable = await c.tableUI.getList('Объекты',['Auto #', 'Название', 'Статус', 'Cотрудник'])
     const currentUser = getLocalPhone(getUserName(msg))
 
     c.botUI.context(msg, async ()=>{
@@ -119,7 +119,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
 
                     // 1. Меняем статус на "Удалил мастер"
                     c.tableUI.updateRow(
-                        'Обьекты', 
+                        'Объекты', 
                         ind+2, // %%% всегда добавлять 2!!!
                         { 'Статус':  'Удалил мастер' } 
                     ) 
@@ -148,7 +148,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                             'Cотрудник': getLocalPhone(msg.chat.username)
                         }]
                          
-                        await c.tableUI.insertRows('Обьекты', obj)
+                        await c.tableUI.insertRows('Объекты', obj)
                         c.data[msg.chat.id].to = String(nextId)
                         
                         await c.botUI.message(msg, TX_CUSTOM_FINAL)

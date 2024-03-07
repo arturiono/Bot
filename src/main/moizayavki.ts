@@ -36,7 +36,7 @@ const TX_EDIT_CANCELED = "⛔️ *Заявка отменена*. Отправи
 
 const MoiZayavki = async (msg:any, c: MainContext, page: number, end:()=>any, newZayavkiData?:any) => {
 
-    const objectsTable = await c.tableUI.getList('Обьекты', ['Auto #', 'Название'])
+    const objectsTable = await c.tableUI.getList('Объекты', ['Auto #', 'Название'])
 
     // кэшируемые данные
     let zayavkiData: any

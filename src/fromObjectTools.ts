@@ -29,7 +29,7 @@ export default async (msg:any, c: MainContext, editTools:boolean, end:()=>any) =
 
     const toolsData = await c.tableUI.getList('Инструмент', 
     ['Auto #', 'Статус' , 'Наименование', 'Описание', 'Местонахождение', 'Сотрудник', 'Заявка', 'Объект'])
-    const objectData = await c.tableUI.getList('Обьекты', ['Auto #', 'Название'])
+    const objectData = await c.tableUI.getList('Объекты', ['Auto #', 'Название'])
 
     let found = false
     for (const [i, dataUser] of toolsData['Сотрудник'].entries()) {

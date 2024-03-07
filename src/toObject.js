@@ -28,7 +28,7 @@ const TX_CANT_DELETE = "Невозможно удалить. На этом об�
 exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, function* () {
     //ассоциативный масив для кэшироания сообщений, чтобы потом удалить при удвлении
     const messagesIds = {};
-    const objTable = yield c.tableUI.getList('Обьекты', ['Auto #', 'Название', 'Статус', 'Cотрудник']);
+    const objTable = yield c.tableUI.getList('Объекты', ['Auto #', 'Название', 'Статус', 'Cотрудник']);
     const currentUser = (0, authorize_1.getLocalPhone)((0, authorize_1.getUserName)(msg));
     c.botUI.context(msg, () => __awaiter(void 0, void 0, void 0, function* () {
         yield c.botUI.message(msg, TX_INITIAL_MESSAGE_TO, { mark_to_remove: true });
@@ -101,7 +101,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
                 if (indx === -1) {
                     // console.log(ind)
                     // 1. Меняем статус на "Удалил мастер"
-                    c.tableUI.updateRow('Обьекты', ind + 2, // %%% всегда добавлять 2!!!
+                    c.tableUI.updateRow('Объекты', ind + 2, // %%% всегда добавлять 2!!!
                     { 'Статус': 'Удалил мастер' });
                     // 2. Удвляем сообщение
                     c.botUI.delete(msg, messagesIds[ind]);
@@ -122,7 +122,7 @@ exports.default = (msg, c, editMode, end) => __awaiter(void 0, void 0, void 0, f
                                 'Статус': 'Добавил мастер',
                                 'Cотрудник': (0, authorize_1.getLocalPhone)(msg.chat.username)
                             }];
-                        yield c.tableUI.insertRows('Обьекты', obj);
+                        yield c.tableUI.insertRows('Объекты', obj);
                         c.data[msg.chat.id].to = String(nextId);
                         yield c.botUI.message(msg, TX_CUSTOM_FINAL);
                         c.botUI.deleteAllMarked(msg);

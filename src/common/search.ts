@@ -11,11 +11,13 @@ interface SearchArr extends Array<SearchItem>{}
 const DECORATORS = /[^a-zA-Zа-яА-ЯёЁ0-9]/g
 
 function split(str:String) {
+    // if(str === undefined) return ['']
     const s = str.replace('ё','е').toLowerCase()
     return s.split(DECORATORS)
 }
 
 function escape(str:String) {
+    if(str === undefined) return ''
     const s = str.replace('ё','е').toLowerCase()
     return s.replace(DECORATORS, "")
 }

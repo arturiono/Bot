@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.zayavkaToData = exports.dataToMessage = void 0;
 // usersTable - данные о имени сотрудника
 function dataToMessage(data, objectTable, showName, usersTable) {
-    // %%% Получить 'Обьекты' для вывода названия Обьектов
+    // %%% Получить 'Объекты' для вывода названия Обьектов
     let str = '';
     if (showName && usersTable) {
         const ind = usersTable['#'].indexOf(data.user);

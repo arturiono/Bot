@@ -63,11 +63,7 @@ var init_bot_ui = __esm({
             if (event === "contact")
               callbackChatId = String(obj.chat.id);
             if (this.replyContext[callbackChatId] && this.replyContext[callbackChatId][event] && typeof this.replyContext[callbackChatId][event] == "function") {
-              try {
-                await this.replyContext[callbackChatId][event](obj);
-              } catch (e) {
-                await this.catch(this.replyContextMsg[callbackChatId], e);
-              }
+              await this.replyContext[callbackChatId][event](obj);
             }
             return;
           });
@@ -97,23 +93,15 @@ Caught exception: ${e}
       commands(obj) {
         Object.keys(obj).forEach(async (key) => {
           this.bot.onText(new RegExp(`/${key}`), async (msg) => {
-            try {
-              await obj[key](msg);
-            } catch (e) {
-              await this.catch(msg, e);
-            }
+            await obj[key](msg);
           });
         });
       }
       // создаёт новый контекст для перехвата ответов
       async context(msg, question, replyObj) {
-        try {
-          await question.call();
-          this.replyContext[msg.chat.id] = replyObj;
-          this.replyContextMsg[msg.chat.id] = msg;
-        } catch (e) {
-          await this.catch(msg, e);
-        }
+        await question.call();
+        this.replyContext[msg.chat.id] = replyObj;
+        this.replyContextMsg[msg.chat.id] = msg;
       }
       // обертка для telegram sendMessage
       async message(msg, text, opt = void 0, customChatId = void 0) {
@@ -137,14 +125,11 @@ Caught exception: ${e}
         const chatId = customChatId ? customChatId : msg.chat.id;
         if (chatId) {
           if (text !== null)
-            try {
-              await this.bot.editMessageText(text, {
-                chat_id: chatId,
-                message_id: msgId,
-                ...nopt
-              });
-            } catch (err) {
-            }
+            await this.bot.editMessageText(text, {
+              chat_id: chatId,
+              message_id: msgId,
+              ...nopt
+            });
           try {
             if (opt !== void 0 && opt !== null && nopt.reply_markup !== null)
               await this.bot.editMessageReplyMarkup(nopt.reply_markup, {
@@ -249,7 +234,7 @@ var require_table_ui = __commonJS({
       model;
       // названия вкладок и колонок в таблице (1-ая строк)
       // {
-      //     'Обьекты': ['#', 'Название', 'Статус']
+      //     'Объекты': ['#', 'Название', 'Статус']
       // }
       constructor(sheetId, model) {
         this.sheetId = sheetId;
@@ -624,7 +609,7 @@ var init_toObject = __esm({
     TX_CANT_DELETE = "\u041D\u0435\u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E \u0443\u0434\u0430\u043B\u0438\u0442\u044C. \u041D\u0430 \u044D\u0442\u043E\u043C \u043E\u0431\u044A\u0435\u043A\u0442\u0435 \u043E\u0441\u0442\u0430\u043B\u0441\u044F \u0438\u043D\u0442\u0440\u0443\u043C\u0435\u043D\u0442.";
     toObject_default = async (msg, c2, editMode, end) => {
       const messagesIds = {};
-      const objTable = await c2.tableUI.getList("\u041E\u0431\u044C\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435", "\u0421\u0442\u0430\u0442\u0443\u0441", "C\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A"]);
+      const objTable = await c2.tableUI.getList("\u041E\u0431\u044A\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435", "\u0421\u0442\u0430\u0442\u0443\u0441", "C\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A"]);
       const currentUser = getLocalPhone(getUserName(msg));
       c2.botUI.context(msg, async () => {
         await c2.botUI.message(msg, TX_INITIAL_MESSAGE_TO, { mark_to_remove: true });
@@ -678,7 +663,7 @@ var init_toObject = __esm({
             const indx = toolsData["\u041E\u0431\u044A\u0435\u043A\u0442"].indexOf(String(ind));
             if (indx === -1) {
               c2.tableUI.updateRow(
-                "\u041E\u0431\u044C\u0435\u043A\u0442\u044B",
+                "\u041E\u0431\u044A\u0435\u043A\u0442\u044B",
                 ind + 2,
                 // %%% всегда добавлять 2!!!
                 { "\u0421\u0442\u0430\u0442\u0443\u0441": "\u0423\u0434\u0430\u043B\u0438\u043B \u043C\u0430\u0441\u0442\u0435\u0440" }
@@ -699,7 +684,7 @@ var init_toObject = __esm({
                   "\u0421\u0442\u0430\u0442\u0443\u0441": "\u0414\u043E\u0431\u0430\u0432\u0438\u043B \u043C\u0430\u0441\u0442\u0435\u0440",
                   "C\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A": getLocalPhone(msg2.chat.username)
                 }];
-                await c2.tableUI.insertRows("\u041E\u0431\u044C\u0435\u043A\u0442\u044B", obj);
+                await c2.tableUI.insertRows("\u041E\u0431\u044A\u0435\u043A\u0442\u044B", obj);
                 c2.data[msg2.chat.id].to = String(nextId);
                 await c2.botUI.message(msg2, TX_CUSTOM_FINAL);
                 c2.botUI.deleteAllMarked(msg2);
@@ -910,7 +895,7 @@ var init_tools = __esm({
     TX_FOUND_1 = "\u041D\u0430\u0439\u0434\u0435\u043D\u043E ";
     TX_FOUND_2 = " (\u043B\u0438\u043C\u0438\u0442 ";
     TX_FOUND_3 = ")";
-    TX_TOOL = "\u0418\u043D\u0441\u0440\u0443\u043C\u0435\u043D\u0442: ";
+    TX_TOOL = "\u0414\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u043E: ";
     TX_END_CONFIRM_REQUEST = "\u0418\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442 \u043D\u0435 \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D. \u041E\u0441\u0442\u0430\u0432\u0438\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0443 \u0431\u0435\u0437 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430?";
     TX_BUTTON_CONFIRM = "\u0414\u0430";
     TX_BUTTON_NOT_CONFIRM = "\u041D\u0435\u0442";
@@ -1413,7 +1398,7 @@ var init_fromObjectTools = __esm({
         "\u0418\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442",
         ["Auto #", "\u0421\u0442\u0430\u0442\u0443\u0441", "\u041D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435", "\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435", "\u041C\u0435\u0441\u0442\u043E\u043D\u0430\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u0435", "\u0421\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A", "\u0417\u0430\u044F\u0432\u043A\u0430", "\u041E\u0431\u044A\u0435\u043A\u0442"]
       );
-      const objectData = await c2.tableUI.getList("\u041E\u0431\u044C\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
+      const objectData = await c2.tableUI.getList("\u041E\u0431\u044A\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
       let found = false;
       for (const [i, dataUser] of toolsData["\u0421\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A"].entries()) {
         if (dataUser === user && toolsData["\u0421\u0442\u0430\u0442\u0443\u0441"][i] !== "\u0421\u043A\u043B\u0430\u0434" && //показывае и заявкку и на объекте
@@ -1634,7 +1619,7 @@ var init_edit = __esm({
     TX_SAVE = "\u0421\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435";
     TX_BUTTON_SAVE = "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044C";
     Edit = async (msg, c2, end, editingHappen, usersTable) => {
-      const objectsTable = await c2.tableUI.getList("\u041E\u0431\u044C\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
+      const objectsTable = await c2.tableUI.getList("\u041E\u0431\u044A\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
       let nmsg;
       let showZayavka = async () => {
         const showName = usersTable ? true : false;
@@ -1769,7 +1754,7 @@ var init_confirm = __esm({
         }, false);
       };
       c2.botUI.deleteAllMarked(msg);
-      const objectsTable = await c2.tableUI.getList("\u041E\u0431\u044C\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
+      const objectsTable = await c2.tableUI.getList("\u041E\u0431\u044A\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
       const nmsg = await c2.botUI.message(msg, dataToMessage(c2.data[msg.chat.id], objectsTable), { mark_to_remove: true });
       c2.botUI.context(msg, async () => {
         const opts = {
@@ -2078,7 +2063,7 @@ var init_zayavka = __esm({
     TX_CONFLICT_TOOLS = "*\u2757\uFE0F\u041F\u0440\u043E\u0438\u0437\u043E\u0448\u0435\u043B \u043A\u043E\u043D\u0444\u043B\u0438\u043A\u0442 \u0438\u043D\u043C\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430*. \u0414\u0440\u0443\u0433\u043E\u0439 \u0441\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A \u0443\u0436\u0435 \u0437\u0430\u043A\u0430\u0437\u0430\u043B \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0439 \u0432\u0430\u043C\u0438 \u0438\u043D\u0441\u0442\u0440\u0443\u0435\u043C\u0435\u043D\u0442. \n\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0442\u0438\u0442\u0435 \u043D\u0430 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u0432 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0435.";
     TX_CONFLICT_RASHODNIKI = "*\u2757\uFE0F\u041F\u0440\u043E\u0438\u0437\u043E\u0448\u0435\u043B \u043A\u043E\u043D\u0444\u043B\u0438\u043A\u0442 \u0440\u0430\u0441\u0445\u043E\u0434\u043D\u0438\u043A\u043E\u0432*. \u041A\u0442\u043E-\u0442\u043E \u0443\u0436\u0435 \u0437\u0430\u043A\u0430\u0437\u0430\u043B \u0447\u0430\u0441\u0442\u044C \u0440\u0430\u0441\u0445\u043E\u0434\u043D\u0438\u043A\u043E\u0432 \n\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0442\u0438\u0442\u0435 \u043D\u0430 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u0432 \u0440\u0430\u0441\u0445\u043E\u0434\u043D\u0438\u043A\u0430\u0445.";
     zayavka_default = async (msg, c2, end) => {
-      const objectsTable = await c2.tableUI.getList("\u041E\u0431\u044C\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
+      const objectsTable = await c2.tableUI.getList("\u041E\u0431\u044A\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
       await c2.botUI.message(msg, TX_INITIAL_MESSAGE5);
       c2.data[msg.chat.id] = {
         id: "Null",
@@ -2194,7 +2179,7 @@ var init_vozvrat = __esm({
     TX_REQEST_CONFIRMED2 = "\u2705 *\u0417\u0430\u044F\u0432\u043A\u0430 \u0432\u043E\u0437\u0440\u0430\u0442\u0430 \u043F\u0440\u0438\u043D\u044F\u0442\u0430*. \u0418\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044F \u043E \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438 \u0431\u0443\u0434\u0435\u0442 \u043F\u043E\u0441\u0442\u0443\u043F\u0430\u0442\u044C \u0432 \u044D\u0442\u043E\u0442 \u0447\u0430\u0442.\n\u0434\u043B\u044F \u0443\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u044F \u0437\u044F\u0432\u043A\u0430\u043C\u0438 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u0440\u0430\u0437\u0434\u0435\u043B \u043C\u0435\u043D\u044E /moizayavki";
     TX_INITIAL_MESSAGE6 = "*\u0417\u0430\u044F\u0432\u043A\u0430 \u0432\u043E\u0437\u0432\u0440\u0430\u0442\u0430 \u043D\u0430 \u0441\u043A\u043B\u0430\u0434*";
     vozvrat_default = async (msg, c2, end) => {
-      const objectsTable = await c2.tableUI.getList("\u041E\u0431\u044C\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
+      const objectsTable = await c2.tableUI.getList("\u041E\u0431\u044A\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
       await c2.botUI.message(msg, TX_INITIAL_MESSAGE6);
       c2.data[msg.chat.id] = {
         id: "Null",
@@ -2264,7 +2249,7 @@ var init_megduobj = __esm({
     TX_REQEST_CONFIRMED3 = "\u2705 *\u0417\u0430\u044F\u0432\u043A\u0430 \u043F\u0435\u0440\u0435\u043D\u043E\u0441\u0430 \u043C\u0435\u0436\u0434\u0443 \u043E\u0431\u044A\u0435\u043A\u0442\u0430\u043C\u0438 \u043F\u0440\u0438\u043D\u044F\u0442\u0430*. \u0418\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044F \u043E \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438 \u0431\u0443\u0434\u0435\u0442 \u043F\u043E\u0441\u0442\u0443\u043F\u0430\u0442\u044C \u0432 \u044D\u0442\u043E\u0442 \u0447\u0430\u0442.\n\u0434\u043B\u044F \u0443\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u044F \u0437\u044F\u0432\u043A\u0430\u043C\u0438 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u0440\u0430\u0437\u0434\u0435\u043B \u043C\u0435\u043D\u044E /moizayavki";
     TX_INITIAL_MESSAGE7 = "*\u0417\u0430\u044F\u0432\u043A\u0430 \u043F\u0435\u0440\u0435\u043D\u043E\u0441\u0430 \u043C\u0435\u0436\u0434\u0443 \u043E\u0431\u044A\u0435\u043A\u0442\u0430\u043C\u0438*";
     megduobj_default = async (msg, c2, end) => {
-      const objectsTable = await c2.tableUI.getList("\u041E\u0431\u044C\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
+      const objectsTable = await c2.tableUI.getList("\u041E\u0431\u044A\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
       await c2.botUI.message(msg, TX_INITIAL_MESSAGE7);
       c2.data[msg.chat.id] = {
         id: "Null",
@@ -2336,7 +2321,7 @@ var init_svobodnaya = __esm({
     TX_REQEST_CONFIRMED4 = "\u2705 *\u0417\u0430\u044F\u0432\u043A\u0430 \u0432 \u0441\u0432\u043E\u0431\u043E\u043D\u043E\u0439 \u0444\u043E\u0440\u043C\u0435 \u043F\u0440\u0438\u043D\u044F\u0442\u0430*. \u0418\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044F \u043E \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438 \u0431\u0443\u0434\u0435\u0442 \u043F\u043E\u0441\u0442\u0443\u043F\u0430\u0442\u044C \u0432 \u044D\u0442\u043E\u0442 \u0447\u0430\u0442.\n\u0434\u043B\u044F \u0443\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u044F \u0437\u044F\u0432\u043A\u0430\u043C\u0438 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u0440\u0430\u0437\u0434\u0435\u043B \u043C\u0435\u043D\u044E /moizayavki";
     TX_INITIAL_MESSAGE8 = "*\u0417\u0430\u044F\u0432\u043A\u0430 \u0432 \u0441\u0432\u043E\u0431\u043E\u0434\u043D\u043E\u0439 \u0444\u043E\u0440\u043C\u0435*";
     svobodnaya_default = async (msg, c2, end) => {
-      const objectsTable = await c2.tableUI.getList("\u041E\u0431\u044C\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
+      const objectsTable = await c2.tableUI.getList("\u041E\u0431\u044A\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
       await c2.botUI.message(msg, TX_INITIAL_MESSAGE8);
       c2.data[msg.chat.id] = {
         id: "Null",
@@ -2417,7 +2402,7 @@ var init_moizayavki = __esm({
     TX_EDIT_CONFIRMED = "\u2705 *\u0417\u0430\u044F\u0432\u043A\u0430 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0430*. \u041E\u0442\u043F\u0440\u0430\u0432\u0438\u043B \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044E \u043C\u0435\u043D\u0435\u0434\u0436\u0435\u0440\u0443";
     TX_EDIT_CANCELED = "\u26D4\uFE0F *\u0417\u0430\u044F\u0432\u043A\u0430 \u043E\u0442\u043C\u0435\u043D\u0435\u043D\u0430*. \u041E\u0442\u043F\u0440\u0430\u0432\u0438\u043B \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044E \u043C\u0435\u043D\u0435\u0434\u0436\u0435\u0440\u0443";
     MoiZayavki = async (msg, c2, page, end, newZayavkiData) => {
-      const objectsTable = await c2.tableUI.getList("\u041E\u0431\u044C\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
+      const objectsTable = await c2.tableUI.getList("\u041E\u0431\u044A\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
       let zayavkiData;
       if (newZayavkiData)
         zayavkiData = newZayavkiData;
@@ -2727,7 +2712,7 @@ var init_manager = __esm({
           "\u0420\u043E\u043B\u044C",
           "ChatId"
         ]);
-        objectsTable = await c2.tableUI.getList("\u041E\u0431\u044C\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
+        objectsTable = await c2.tableUI.getList("\u041E\u0431\u044A\u0435\u043A\u0442\u044B", ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"]);
         newCashedData = {
           zayavkiTable,
           usersTable,
@@ -2983,7 +2968,7 @@ var OPT = {
 };
 var EVENTS = ["message", "callback_query", "contact"];
 var TABLE_MODEL = {
-  "\u041E\u0431\u044C\u0435\u043A\u0442\u044B": ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435", "\u0421\u0442\u0430\u0442\u0443\u0441", "C\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A"],
+  "\u041E\u0431\u044A\u0435\u043A\u0442\u044B": ["Auto #", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435", "\u0421\u0442\u0430\u0442\u0443\u0441", "C\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A"],
   "\u0421\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A\u0438": ["#", "\u0424\u0418\u041E", "\u0420\u043E\u043B\u044C", "\u0414\u043E\u043B\u0436\u043D\u043E\u0441\u0442\u044C", "Username", "ChatId"],
   "\u0418\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442": ["Auto #", "\u0421\u0442\u0430\u0442\u0443\u0441", "\u0414\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u0441\u0442\u044C", "\u041D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435", "\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435", "\u0424\u043E\u0442\u043E", "\u041C\u0435\u0441\u0442\u043E\u043D\u0430\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u0435", "\u041E\u0442\u0432\u0435\u0442\u0441\u0432\u0435\u043D\u043D\u044B\u0439", "\u0421\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A", "\u041E\u0431\u044A\u0435\u043A\u0442", "\u0417\u0430\u044F\u0432\u043A\u0430", "\u041C\u0435\u0441\u0442\u043E"],
   "\u0420\u0430\u0441\u0445\u043E\u0434\u043D\u0438\u043A\u0438": ["Auto #", "\u041A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u043E", "\u0418\u0437\u043C\u0435\u0440\u0435\u043D\u0438\u0435", "\u041A\u0430\u0442\u0435\u0433\u043E\u0440\u0438\u044F", "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435", "\u0412\u0430\u0440\u0438\u0430\u043D\u0442", "\u0424\u043E\u0442\u043E", "\u041C\u0435\u0441\u0442\u043E"],
@@ -3068,6 +3053,5 @@ botUI.commands({
     }
   })
 });
-//!!! Телеграм ругается если прихояд дубликат текста
 //!!! Телеграм ругается если прихояд дубликаты кнопок
 //!!! чистии ID добавленное при создании, а не при edit (там не важно что)

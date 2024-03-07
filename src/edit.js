@@ -42,7 +42,7 @@ const TX_SAVE = "Сохранение";
 const TX_BUTTON_SAVE = "Подтвердить";
 // предлагаем пользователю вернутся в сценарии редактирования
 const Edit = (msg, c, end, editingHappen, usersTable) => __awaiter(void 0, void 0, void 0, function* () {
-    const objectsTable = yield c.tableUI.getList('Обьекты', ['Auto #', 'Название']);
+    const objectsTable = yield c.tableUI.getList('Объекты', ['Auto #', 'Название']);
     let nmsg;
     let showZayavka = () => __awaiter(void 0, void 0, void 0, function* () {
         const showName = usersTable ? true : false;

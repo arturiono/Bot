@@ -12,10 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetToolsByIds = exports.SearchToolsByStr = void 0;
 const DECORATORS = /[^a-zA-Zа-яА-ЯёЁ0-9]/g;
 function split(str) {
+    // if(str === undefined) return ['']
     const s = str.replace('ё', 'е').toLowerCase();
     return s.split(DECORATORS);
 }
 function escape(str) {
+    if (str === undefined)
+        return '';
     const s = str.replace('ё', 'е').toLowerCase();
     return s.replace(DECORATORS, "");
 }

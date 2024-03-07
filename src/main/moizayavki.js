@@ -38,7 +38,7 @@ const TX_EDIT_CANCELED = "⛔️ *Заявка отменена*. Отправи
 // const TX_INITIAL_MESSAGE = '⌨️ Введите *комментарий для менджера*:'
 // page = 1,2,3 ...
 const MoiZayavki = (msg, c, page, end, newZayavkiData) => __awaiter(void 0, void 0, void 0, function* () {
-    const objectsTable = yield c.tableUI.getList('Обьекты', ['Auto #', 'Название']);
+    const objectsTable = yield c.tableUI.getList('Объекты', ['Auto #', 'Название']);
     // кэшируемые данные
     let zayavkiData;
     if (newZayavkiData)

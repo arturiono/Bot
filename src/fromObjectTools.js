@@ -31,7 +31,7 @@ exports.default = (msg, c, editTools, end) => __awaiter(void 0, void 0, void 0, 
     const savedMessagesIdsByIndex = {}; // ind -> msgId те, которые выведены
     const savedAddedMessagesIdsByIndex = {}; // ind -> msgId добавленные пользователем
     const toolsData = yield c.tableUI.getList('Инструмент', ['Auto #', 'Статус', 'Наименование', 'Описание', 'Местонахождение', 'Сотрудник', 'Заявка', 'Объект']);
-    const objectData = yield c.tableUI.getList('Обьекты', ['Auto #', 'Название']);
+    const objectData = yield c.tableUI.getList('Объекты', ['Auto #', 'Название']);
     let found = false;
     for (const [i, dataUser] of toolsData['Сотрудник'].entries()) {
         if (dataUser === user &&

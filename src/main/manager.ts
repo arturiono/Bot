@@ -78,7 +78,7 @@ const Manager = async (msg:any, c: MainContext, end:()=>any, cashedData?:cashedD
             '#', 'ФИО', 'Роль', 'ChatId'
         ])
 
-        objectsTable = await c.tableUI.getList('Обьекты', ['Auto #', 'Название'])
+        objectsTable = await c.tableUI.getList('Объекты', ['Auto #', 'Название'])
 
         newCashedData = {
             zayavkiTable,

@@ -18,7 +18,7 @@ const TX_INITIAL_MESSAGE = "*Заявка переноса между объек
 
 export default async (msg:any, c: MainContext, end:()=>any) => {
 
-    const objectsTable = await c.tableUI.getList('Обьекты', ['Auto #', 'Название'])
+    const objectsTable = await c.tableUI.getList('Объекты', ['Auto #', 'Название'])
     await c.botUI.message(msg, TX_INITIAL_MESSAGE)
 
     c.data[msg.chat.id] = {

@@ -37,7 +37,6 @@ const BOTTOKEN = "6839163652:AAGNG9Uu9rrpwnil6WFMlw6tOLeITmxcRqI" //4321 bot
 // const BOTTOKEN = "6287688949:AAFalubhPUjnzkiSBb3ESxnogmlOpqpQXgc" //1234 bot
 // const BOTTOKEN = "6511717620:AAGImOYrSujIshw-T5qu6CdBnhaP91nSFlY" // k1Pro
 
-
 const OPT = {
     polling: {
         interval: 300,

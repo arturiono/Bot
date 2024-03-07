@@ -17,7 +17,7 @@ const TX_INITIAL_MESSAGE = "*Заявка возврата на склад*"
 
 export default async (msg:any, c: MainContext, end:()=>any) => {
 
-    const objectsTable = await c.tableUI.getList('Обьекты', ['Auto #', 'Название'])
+    const objectsTable = await c.tableUI.getList('Объекты', ['Auto #', 'Название'])
     await c.botUI.message(msg, TX_INITIAL_MESSAGE)
 
     c.data[msg.chat.id] = {

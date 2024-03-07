@@ -29,7 +29,7 @@ const Confirm = (msg, c, end) => __awaiter(void 0, void 0, void 0, function* () 
         }), false);
     });
     c.botUI.deleteAllMarked(msg);
-    const objectsTable = yield c.tableUI.getList('Обьекты', ['Auto #', 'Название']);
+    const objectsTable = yield c.tableUI.getList('Объекты', ['Auto #', 'Название']);
     const nmsg = yield c.botUI.message(msg, (0, requestConverter_1.dataToMessage)(c.data[msg.chat.id], objectsTable), { mark_to_remove: true });
     c.botUI.context(msg, () => __awaiter(void 0, void 0, void 0, function* () {
         // показываем заявку
