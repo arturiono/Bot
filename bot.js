@@ -2987,8 +2987,8 @@ var moizayavki_1 = __importDefault((init_moizayavki(), __toCommonJS(moizayavki_e
 var namne_1 = __importDefault((init_namne(), __toCommonJS(namne_exports)));
 var manager_1 = __importDefault((init_manager(), __toCommonJS(manager_exports)));
 var TX_WELLCOME_MESSAGE = "\u041F\u0440\u0438\u0432\u0435\u0442! \u042F \u0431\u043E\u0442 \u043A\u043E\u043C\u043F\u0430\u043D\u0438\u0438 Naptech. *\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u043C\u0435\u043D\u044E /* \u0434\u043B\u044F \u0440\u0430\u0431\u043E\u0442\u044B \u0441\u043E \u043C\u043D\u043E\u0439.";
-var SHEET_ID = "16Z6opmCk2VnXFHraYIqdGhOTT_MJtQwIRHe3KPhNys0";
-var BOTTOKEN = "6839163652:AAGNG9Uu9rrpwnil6WFMlw6tOLeITmxcRqI";
+var SHEET_ID = "12LFi9eXfizondNQgE7sBqrMr78Mt6pRnz8Jbuhzv14k";
+var BOTTOKEN = "6511717620:AAGImOYrSujIshw-T5qu6CdBnhaP91nSFlY";
 var OPT = {
   polling: {
     interval: 300,
