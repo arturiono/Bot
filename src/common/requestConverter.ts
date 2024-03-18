@@ -48,6 +48,7 @@ export function dataToMessage (data:ABReqest, objectTable:any, showName?:boolean
         str += 'Точка А: *' + from + '*\n'
         str += 'Точка B: *' + to + '*\n'
 
+        // лучше показывать инструмент
         if(Object.values(data.tools).length !==0)
             str += 'Инструмент: *' + Object.values(data.tools).map(function(item:any, index:any) {
                 const space = index === 0? '' : ' ' 

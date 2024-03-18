@@ -34,6 +34,7 @@ function dataToMessage(data, objectTable, showName, usersTable) {
         const to = objectTable['Название'][toId];
         str += 'Точка А: *' + from + '*\n';
         str += 'Точка B: *' + to + '*\n';
+        // лучше показывать инструмент
         if (Object.values(data.tools).length !== 0)
             str += 'Инструмент: *' + Object.values(data.tools).map(function (item, index) {
                 const space = index === 0 ? '' : ' ';

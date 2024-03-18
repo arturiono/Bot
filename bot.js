@@ -63,7 +63,11 @@ var init_bot_ui = __esm({
             if (event === "contact")
               callbackChatId = String(obj.chat.id);
             if (this.replyContext[callbackChatId] && this.replyContext[callbackChatId][event] && typeof this.replyContext[callbackChatId][event] == "function") {
-              await this.replyContext[callbackChatId][event](obj);
+              try {
+                await this.replyContext[callbackChatId][event](obj);
+              } catch (e) {
+                await this.catch(this.replyContextMsg[callbackChatId], e);
+              }
             }
             return;
           });
@@ -93,15 +97,23 @@ Caught exception: ${e}
       commands(obj) {
         Object.keys(obj).forEach(async (key) => {
           this.bot.onText(new RegExp(`/${key}`), async (msg) => {
-            await obj[key](msg);
+            try {
+              await obj[key](msg);
+            } catch (e) {
+              await this.catch(msg, e);
+            }
           });
         });
       }
       // создаёт новый контекст для перехвата ответов
       async context(msg, question, replyObj) {
-        await question.call();
-        this.replyContext[msg.chat.id] = replyObj;
-        this.replyContextMsg[msg.chat.id] = msg;
+        try {
+          await question.call();
+          this.replyContext[msg.chat.id] = replyObj;
+          this.replyContextMsg[msg.chat.id] = msg;
+        } catch (e) {
+          await this.catch(msg, e);
+        }
       }
       // обертка для telegram sendMessage
       async message(msg, text, opt = void 0, customChatId = void 0) {
@@ -125,11 +137,14 @@ Caught exception: ${e}
         const chatId = customChatId ? customChatId : msg.chat.id;
         if (chatId) {
           if (text !== null)
-            await this.bot.editMessageText(text, {
-              chat_id: chatId,
-              message_id: msgId,
-              ...nopt
-            });
+            try {
+              await this.bot.editMessageText(text, {
+                chat_id: chatId,
+                message_id: msgId,
+                ...nopt
+              });
+            } catch (err) {
+            }
           try {
             if (opt !== void 0 && opt !== null && nopt.reply_markup !== null)
               await this.bot.editMessageReplyMarkup(nopt.reply_markup, {
@@ -708,7 +723,7 @@ var init_dostavka = __esm({
     TX_BTN_SELF_PRIVESU = "\u0411\u0435\u0437 \u0434\u043E\u0441\u0442\u0430\u0432\u043A\u0438";
     TX_BTN_DELIVERY = "\u041D\u0443\u0436\u043D\u0430 \u0434\u043E\u0441\u0442\u0430\u0432\u043A\u0430";
     TX_SUCESS_DELIVERY = "\u041F\u043E\u043D\u044F\u043B, *\u043F\u0440\u0438\u0432\u0435\u0437\u0435\u043C*";
-    TX_SUCESS_SELF = "\u041F\u043E\u043D\u044F\u043B, *\u0437\u0430\u0431\u0435\u0440\u0435\u0448\u044C \u0441\u0430\u043C*";
+    TX_SUCESS_SELF = "\u041F\u043E\u043D\u044F\u043B, *\u0441\u0430\u043C\u043E\u0432\u044B\u0432\u043E\u0437*";
     dostavka_default = async (msg, c2, editMode, end) => {
       let delMsg;
       c2.botUI.context(msg, async () => {
@@ -816,9 +831,15 @@ var init_dateTime = __esm({
 // src/common/search.ts
 function split(str) {
   const s = str.replace("\u0451", "\u0435").toLowerCase();
-  return s.split(DECORATORS);
+  const arr = s.split(DECORATORS);
+  const filtered = arr.filter(function(el) {
+    return el !== "";
+  });
+  return filtered;
 }
 function escape(str) {
+  if (str === void 0)
+    return "";
   const s = str.replace("\u0451", "\u0435").toLowerCase();
   return s.replace(DECORATORS, "");
 }
@@ -826,24 +847,35 @@ async function SearchToolsByStr(c2, str) {
   let searchRes = [];
   const rows = await c2.tableUI.getList("\u0418\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442", ["Auto #", "\u041D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435", "\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435", "\u0424\u043E\u0442\u043E", "\u0421\u0442\u0430\u0442\u0443\u0441", "\u0414\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u0441\u0442\u044C"]);
   const strArr = split(str);
+  let makeFound = (i) => {
+    if (rows["\u0414\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u0441\u0442\u044C"][i] === "\u0418\u0441\u043F\u0440\u0430\u0432\u0435\u043D" && rows["\u0421\u0442\u0430\u0442\u0443\u0441"][i] === "\u0421\u043A\u043B\u0430\u0434") {
+      searchRes.push({
+        id: rows["Auto #"][i],
+        name: rows["\u041D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435"][i],
+        desc: rows["\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435"][i],
+        url: rows["\u0424\u043E\u0442\u043E"][i]
+      });
+    }
+  };
+  strArr.forEach((str2) => {
+    const i = rows["Auto #"].indexOf(str2);
+    if (i !== -1) {
+      makeFound(i);
+    }
+  });
   rows["Auto #"].forEach((id, i) => {
     const name = rows["\u041D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435"][i];
     const desc = rows["\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435"][i];
     const nameEscaped = escape(name);
     const descEscaped = escape(desc);
-    let foundAcc = strArr.length;
+    let found = false;
     strArr.forEach((str2) => {
       if (nameEscaped.indexOf(str2) != -1 || descEscaped.indexOf(str2) != -1) {
-        foundAcc--;
+        found = true;
       }
     });
-    if (foundAcc === 0 && rows["\u0414\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u0441\u0442\u044C"][i] === "\u0418\u0441\u043F\u0440\u0430\u0432\u0435\u043D" && rows["\u0421\u0442\u0430\u0442\u0443\u0441"][i] === "\u0421\u043A\u043B\u0430\u0434") {
-      searchRes.push({
-        id,
-        name,
-        desc,
-        url: rows["\u0424\u043E\u0442\u043E"][i]
-      });
+    if (found) {
+      makeFound(i);
     }
   });
   return searchRes;
@@ -918,7 +950,7 @@ var init_tools = __esm({
         if (photoUrl) {
           opts.reply_markup.inline_keyboard[0].push({ text: TX_BUTTON_PHOTO, url: photoUrl });
         }
-        const nmsg = await c2.botUI.message(msg, `*${desc}*
+        const nmsg = await c2.botUI.message(msg, `#${id} *${desc}*
 ${name}`, opts);
         searchResultMessages[String(id)] = nmsg.message_id;
         cachedObject[String(id)] = { name, desc };
@@ -929,7 +961,7 @@ ${name}`, opts);
             inline_keyboard: [[{ text: TX_BUTTON_DELETE, callback_data: "delete_" + id }]]
           }
         };
-        const nmsg = await c2.botUI.message(msg, TX_TOOL + "*" + desc + "*\n" + name, opts);
+        const nmsg = await c2.botUI.message(msg, TX_TOOL + "#" + id + " *" + desc + "*\n" + name, opts);
         addedToolsMessages[String(id)] = nmsg.message_id;
       };
       let showEndMessage = async () => {
@@ -1007,7 +1039,7 @@ ${name}`, opts);
               await clearsearchResultMessagess();
               for (const id in addedToolsMessages) {
                 c2.botUI.delete(msg, addedToolsMessages[id]);
-                await c2.botUI.message(msg, TX_TOOL + "*" + cachedObject[id].desc + "*\n" + cachedObject[id].name);
+                await c2.botUI.message(msg, TX_TOOL + "#" + id + " *" + cachedObject[id].desc + "*\n" + cachedObject[id].name);
               }
               await end();
             }
@@ -1025,7 +1057,7 @@ ${name}`, opts);
             const id = query.data.split("_")[1];
             if (type === "add") {
               await showAddedTool(id, cachedObject[id].name, cachedObject[id].desc);
-              addedTools[id] = cachedObject[id].desc + " (" + cachedObject[id].name + ")";
+              addedTools[id] = "#" + id + " " + cachedObject[id].desc + "(" + cachedObject[id].name + ")";
               await c2.botUI.delete(msg, searchResultMessages[id]);
               delete searchResultMessages[id];
             } else {
@@ -2955,8 +2987,8 @@ var moizayavki_1 = __importDefault((init_moizayavki(), __toCommonJS(moizayavki_e
 var namne_1 = __importDefault((init_namne(), __toCommonJS(namne_exports)));
 var manager_1 = __importDefault((init_manager(), __toCommonJS(manager_exports)));
 var TX_WELLCOME_MESSAGE = "\u041F\u0440\u0438\u0432\u0435\u0442! \u042F \u0431\u043E\u0442 \u043A\u043E\u043C\u043F\u0430\u043D\u0438\u0438 Naptech. *\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u043C\u0435\u043D\u044E /* \u0434\u043B\u044F \u0440\u0430\u0431\u043E\u0442\u044B \u0441\u043E \u043C\u043D\u043E\u0439.";
-var SHEET_ID = "12LFi9eXfizondNQgE7sBqrMr78Mt6pRnz8Jbuhzv14k";
-var BOTTOKEN = "6511717620:AAGImOYrSujIshw-T5qu6CdBnhaP91nSFlY";
+var SHEET_ID = "16Z6opmCk2VnXFHraYIqdGhOTT_MJtQwIRHe3KPhNys0";
+var BOTTOKEN = "6839163652:AAGNG9Uu9rrpwnil6WFMlw6tOLeITmxcRqI";
 var OPT = {
   polling: {
     interval: 300,
@@ -3053,5 +3085,6 @@ botUI.commands({
     }
   })
 });
+//!!! Телеграм ругается если прихояд дубликат текста
 //!!! Телеграм ругается если прихояд дубликаты кнопок
 //!!! чистии ID добавленное при создании, а не при edit (там не важно что)

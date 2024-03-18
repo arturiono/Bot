@@ -56,7 +56,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
             opts.reply_markup.inline_keyboard[0].push({ text: TX_BUTTON_PHOTO, url: photoUrl})
         }
 
-        const nmsg = await c.botUI.message(msg, `*${desc}*\n${name}`, opts)
+        const nmsg = await c.botUI.message(msg, `#${id} *${desc}*\n${name}`, opts)
         searchResultMessages[String(id)] = nmsg.message_id
         cachedObject[String(id)] = {name: name, desc: desc}
     }
@@ -67,7 +67,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                 inline_keyboard: [ [ { text: TX_BUTTON_DELETE, callback_data: "delete_" + id }] ]
             }
         }
-        const nmsg = await c.botUI.message(msg, TX_TOOL + '*' + desc + '*' + 
+        const nmsg = await c.botUI.message(msg, TX_TOOL + '#' + id + ' *' + desc + '*' + 
         '\n' + name, opts)
         // добавляем с возможностью будущего удаления
         addedToolsMessages[String(id)] = nmsg.message_id 
@@ -183,7 +183,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                     // заменяем все добавленные на сообщения без кнопки
                     for (const id in addedToolsMessages) {
                         c.botUI.delete(msg, addedToolsMessages[id])
-                        await c.botUI.message(msg, TX_TOOL + '*' + cachedObject[id].desc + '*' + 
+                        await c.botUI.message(msg, TX_TOOL + '#'+ id + ' *' + cachedObject[id].desc + '*' + 
                         '\n' + cachedObject[id].name)
                     }
 
@@ -216,7 +216,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                     //     await c.botUI.message(msg, cachedObject[id].name + TX_EXISTS_2, {mark_to_remove: true})
                     // } else {
                         await showAddedTool(id, cachedObject[id].name, cachedObject[id].desc)
-                        addedTools[id] = cachedObject[id].desc + ' (' + cachedObject[id].name + ')'
+                        addedTools[id] = '#' + id + ' ' + cachedObject[id].desc + '(' + cachedObject[id].name + ')'
 
                         await c.botUI.delete(msg, searchResultMessages[id])
                         delete searchResultMessages[id] 

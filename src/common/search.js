@@ -14,7 +14,11 @@ const DECORATORS = /[^a-zA-Zа-яА-ЯёЁ0-9]/g;
 function split(str) {
     // if(str === undefined) return ['']
     const s = str.replace('ё', 'е').toLowerCase();
-    return s.split(DECORATORS);
+    const arr = s.split(DECORATORS);
+    const filtered = arr.filter(function (el) {
+        return el !== '';
+    });
+    return filtered;
 }
 function escape(str) {
     if (str === undefined)
@@ -28,26 +32,46 @@ function SearchToolsByStr(c, str) {
         let searchRes = [];
         const rows = yield c.tableUI.getList('Инструмент', ['Auto #', 'Наименование', 'Описание', 'Фото', 'Статус', 'Доступность']);
         const strArr = split(str);
+        // console.log(strArr)
         // console.log(rows)
+        let makeFound = (i) => {
+            if (rows['Доступность'][i] === "Исправен" && rows['Статус'][i] === 'Склад') {
+                // console.log(`PUSH: ${rows['Auto #'][i]} : ${rows['Наименование'][i]} : ${rows['Описание'][i]}`)
+                searchRes.push({
+                    id: rows['Auto #'][i],
+                    name: rows['Наименование'][i],
+                    desc: rows['Описание'][i],
+                    url: rows['Фото'][i]
+                });
+            }
+        };
+        // поиск по ID, 100% - ое совпадение, приоритетный 
+        strArr.forEach((str) => {
+            // console.log(str)
+            // console.log(rows['Auto #'])
+            const i = rows['Auto #'].indexOf(str);
+            // console.log(i)
+            // console.log(rows['Auto #'][i])
+            if (i !== -1) {
+                // console.log('HAPPEN')
+                makeFound(i);
+            }
+        });
+        // посик по name & desk
         rows['Auto #'].forEach((id, i) => {
             const name = rows['Наименование'][i];
             const desc = rows['Описание'][i];
+            // const tid = rows['Auto #'][i]
             const nameEscaped = escape(name);
             const descEscaped = escape(desc);
-            let foundAcc = strArr.length;
+            let found = false;
             strArr.forEach((str) => {
                 if (nameEscaped.indexOf(str) != -1 || descEscaped.indexOf(str) != -1) {
-                    foundAcc--;
+                    found = true;
                 }
             });
-            if (foundAcc === 0 && rows['Доступность'][i] === "Исправен" && rows['Статус'][i] === 'Склад') {
-                // console.log(`${id} : ${row[nameRow]} : ${row[descRow]}`)
-                searchRes.push({
-                    id: id,
-                    name: name,
-                    desc: desc,
-                    url: rows['Фото'][i]
-                });
+            if (found) {
+                makeFound(i);
             }
         });
         return searchRes;
