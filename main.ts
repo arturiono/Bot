@@ -1,11 +1,3 @@
-// Сервер REG
-// Логин: root
-// Пароль: P61kwfZ5L8mAbSAn
-// 95.163.229.14
-
-// скопировать бот на SSH
-// scp /Users/inarty/Yandex.Disk.localized/My\ Projects/Naptech/Bot/bot.js root@95.163.229.14:/
-
 // Библиотеки
 import {MainContext, Data} from './types/types'
 import BotUI from './lib/bot-ui'
