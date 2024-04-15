@@ -1,8 +1,4 @@
 "use strict";
-// Сервер REG
-// Логин: root
-// Пароль: P61kwfZ5L8mAbSAn
-// 95.163.229.14
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {

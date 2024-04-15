@@ -7,6 +7,7 @@ interface SearchItem {
 }
 interface SearchArr extends Array<SearchItem> {
 }
+export declare function SearchToolsByIds(c: MainContext, idsStr: String): Promise<SearchArr>;
 export declare function SearchToolsByStr(c: MainContext, str: String): Promise<SearchArr>;
 export declare function GetToolsByIds(c: MainContext, ids: Tools | undefined): Promise<SearchArr>;
 export {};

@@ -1,13 +1,13 @@
 import BotUI from '../lib/bot-ui';
-type IdNamePair = {
+declare type IdNamePair = {
     id: Number;
     name: String;
 };
-export type IdNamePairArray = Array<IdNamePair>;
+export declare type IdNamePairArray = Array<IdNamePair>;
 export interface Data {
     [key: string]: ABReqest;
 }
-export type MainContext = {
+export declare type MainContext = {
     tableUI: any;
     botUI: BotUI;
     data: Data;
@@ -24,10 +24,10 @@ export interface Rashodniki {
 export interface Tools {
     [key: string]: string;
 }
-export type Status = 'Обработка' | 'Собран' | 'Доставка' | 'Объект' | 'Склад' | 'Отмена';
-export type JournalToolStatus = 'Заявка' | 'Объект' | 'Склад';
-export type RequestType = 'Со склада' | 'Возврат' | 'Между объектами' | 'Свободная';
-export type ABReqest = {
+export declare type Status = 'Обработка' | 'Собран' | 'Доставка' | 'Объект' | 'Склад' | 'Отмена';
+export declare type JournalToolStatus = 'Заявка' | 'Объект' | 'Склад';
+export declare type RequestType = 'Со склада' | 'Возврат' | 'Между объектами' | 'Свободная';
+export declare type ABReqest = {
     id: string | 'Null';
     type: RequestType;
     status: Status;

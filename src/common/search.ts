@@ -26,6 +26,35 @@ function escape(str:String) {
     return s.replace(DECORATORS, "")
 }
 
+// поиск по списку id-шников
+// "24 32 145 16"
+export async function SearchToolsByIds(c: MainContext, idsStr:String) {
+
+    let searchRes:SearchArr = []
+    const rows = await c.tableUI.getList('Инструмент',['Auto #', 'Наименование', 'Описание', 'Фото', 'Статус', 'Доступность'])
+    const strArr = idsStr.split(' ')
+
+    strArr.forEach((str)=>{
+
+        const i = rows['Auto #'].indexOf(escape(str))
+        if (i !== -1) {
+            if (rows['Доступность'][i] === "Исправен" && rows['Статус'][i] === 'Склад') {
+                // console.log(`PUSH: ${rows['Auto #'][i]} : ${rows['Наименование'][i]} : ${rows['Описание'][i]}`)
+                searchRes.push({
+                    id: rows['Auto #'][i],
+                    name: rows['Наименование'][i],
+                    desc: rows['Описание'][i],
+                    url: rows['Фото'][i]
+                })
+            } 
+        }
+        
+    })
+
+    return searchRes
+
+}
+
 // поиск по строке
 export async function SearchToolsByStr(c: MainContext, str:String) {
 
@@ -33,19 +62,17 @@ export async function SearchToolsByStr(c: MainContext, str:String) {
     const rows = await c.tableUI.getList('Инструмент',['Auto #', 'Наименование', 'Описание', 'Фото', 'Статус', 'Доступность'])
     const strArr = split(str)
 
-    // console.log(strArr)
-    // console.log(rows)
-
     let makeFound = (i:number)=>{
 
         if (rows['Доступность'][i] === "Исправен" && rows['Статус'][i] === 'Склад') {
-            // console.log(`PUSH: ${rows['Auto #'][i]} : ${rows['Наименование'][i]} : ${rows['Описание'][i]}`)
-            searchRes.push({
-                id: rows['Auto #'][i],
-                name: rows['Наименование'][i],
-                desc: rows['Описание'][i],
-                url: rows['Фото'][i]
-            })
+            if (i !== -1) {
+                searchRes.push({
+                    id: rows['Auto #'][i],
+                    name: rows['Наименование'][i],
+                    desc: rows['Описание'][i],
+                    url: rows['Фото'][i]
+                })
+            }
         } 
 
     }

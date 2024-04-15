@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetToolsByIds = exports.SearchToolsByStr = void 0;
+exports.GetToolsByIds = exports.SearchToolsByStr = exports.SearchToolsByIds = void 0;
 const DECORATORS = /[^a-zA-Zа-яА-ЯёЁ0-9]/g;
 function split(str) {
     // if(str === undefined) return ['']
@@ -26,23 +26,47 @@ function escape(str) {
     const s = str.replace('ё', 'е').toLowerCase();
     return s.replace(DECORATORS, "");
 }
+// поиск по списку id-шников
+// "24 32 145 16"
+function SearchToolsByIds(c, idsStr) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let searchRes = [];
+        const rows = yield c.tableUI.getList('Инструмент', ['Auto #', 'Наименование', 'Описание', 'Фото', 'Статус', 'Доступность']);
+        const strArr = idsStr.split(' ');
+        strArr.forEach((str) => {
+            const i = rows['Auto #'].indexOf(escape(str));
+            if (i !== -1) {
+                if (rows['Доступность'][i] === "Исправен" && rows['Статус'][i] === 'Склад') {
+                    // console.log(`PUSH: ${rows['Auto #'][i]} : ${rows['Наименование'][i]} : ${rows['Описание'][i]}`)
+                    searchRes.push({
+                        id: rows['Auto #'][i],
+                        name: rows['Наименование'][i],
+                        desc: rows['Описание'][i],
+                        url: rows['Фото'][i]
+                    });
+                }
+            }
+        });
+        return searchRes;
+    });
+}
+exports.SearchToolsByIds = SearchToolsByIds;
 // поиск по строке
 function SearchToolsByStr(c, str) {
     return __awaiter(this, void 0, void 0, function* () {
         let searchRes = [];
         const rows = yield c.tableUI.getList('Инструмент', ['Auto #', 'Наименование', 'Описание', 'Фото', 'Статус', 'Доступность']);
         const strArr = split(str);
-        // console.log(strArr)
-        // console.log(rows)
         let makeFound = (i) => {
             if (rows['Доступность'][i] === "Исправен" && rows['Статус'][i] === 'Склад') {
-                // console.log(`PUSH: ${rows['Auto #'][i]} : ${rows['Наименование'][i]} : ${rows['Описание'][i]}`)
-                searchRes.push({
-                    id: rows['Auto #'][i],
-                    name: rows['Наименование'][i],
-                    desc: rows['Описание'][i],
-                    url: rows['Фото'][i]
-                });
+                if (i !== -1) {
+                    searchRes.push({
+                        id: rows['Auto #'][i],
+                        name: rows['Наименование'][i],
+                        desc: rows['Описание'][i],
+                        url: rows['Фото'][i]
+                    });
+                }
             }
         };
         // поиск по ID, 100% - ое совпадение, приоритетный 

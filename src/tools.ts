@@ -1,10 +1,11 @@
 import {MainContext, Tools} from '../types/types'
-import {SearchToolsByStr, GetToolsByIds} from './common/search'
+import {SearchToolsByStr, SearchToolsByIds, GetToolsByIds} from './common/search'
 
 const LINK_TABLE = 'https://docs.google.com/spreadsheets/d/12LFi9eXfizondNQgE7sBqrMr78Mt6pRnz8Jbuhzv14k/edit?usp=sharing'
 
 const TX_INITIAL_MESSAGE = '*Добавление инструмента*:'
-const TX_SEARCH_MESSAGE = 'Для 🔎 поиска и добавления *пиши поисковый запрос в сообщении*'
+const TX_SEARCH_MESSAGE = '*Для 🔎 поиска пиши запрос в тексте сообщения* '+
+                          'или перечисли номера инструмента после знака # (пример: "# 100 110 111")'
 const TX_INITIAL_MESSAGE_EDIT = '*Редактирование инструмента*:'
 const TX_SEARCH_NORESULT = "По запросу ничего не найдено"
 const TX_END_MESSAGE = "Для выхода из добавления инструмента нажмите"
@@ -18,6 +19,7 @@ const TX_FOUND_1 = 'Найдено '
 const TX_FOUND_2 = ' (лимит '
 const TX_FOUND_3 = ')'
 const TX_TOOL = 'Добавлено: '
+const TX_ALREADY_TOOL = 'Инструмент уже добавлен: '
 
 const TX_END_CONFIRM_REQUEST = "Инструмент не добавлен. Оставить заявку без инструмента?"
 const TX_BUTTON_CONFIRM = 'Да'
@@ -37,7 +39,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
 
     let addedTools:Tools = c.data[msg.chat.id].tools
 
-    let showFoundedTool = async (id:String, name:String, desc:String, photoUrl:String) => {
+    let showFoundedToolAndCashIt = async (id:String, name:String, desc:String, photoUrl:String) => {
 
         // console.log(name)
         // console.log(desc)
@@ -73,6 +75,11 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
         addedToolsMessages[String(id)] = nmsg.message_id 
     }
 
+    let addTool = async (id:string, name:string, desc:string) => {
+        addedTools[id] = '#' + id + ' ' + desc + '(' + name + ')'
+    }
+
+    
     let showEndMessage = async () => {
 
         const endOpts = {
@@ -133,28 +140,63 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
             // messagesToRemove = [msg.message_id]
             c.botUI.markToDelete(msg, msg.message_id) //добавляем для будущего удалению сообщение пользователя
 
-            const searchRes = await SearchToolsByStr(c, msg.text)
+            // V1 добавление сразу по ID
+            // Например #23 132 35 45
+            // какойто ID может быть не найде
+            if(msg.text.indexOf('#') !== -1) {
 
-            if (searchRes.length) {
-                
-                let cur_i = 0
-                for (let i = 0; i < searchRes.length; i++) {
-                    
-                    const o = searchRes[i]
 
-                    // показываем только те, которые не добавлены
-                    if (cur_i < SEARCH_LIMIT)
-                        if (addedTools && !addedTools[String(o.id)]) {
-                            await showFoundedTool(o.id, o.name, o.desc, o.url)
-                            cur_i ++
+                let strArr = msg.text.split('#')
+                const searchRes = await SearchToolsByIds(c, strArr[1])
+
+                if (searchRes.length) {
+                    for (let i = 0; i < searchRes.length; i++) {
+                        const o = searchRes[i]
+                        // проверяем не был ли добавлен инструмент ранее
+                        if(addedTools[String(o.id)] === undefined) {
+                            cachedObject[String(o.id)] = {name: o.name, desc: o.desc}
+                            // Показываем и сразудобавляем инструменты
+                            await showAddedTool(o.id, cachedObject[String(o.id)].name, cachedObject[String(o.id)].desc)
+                            await addTool(String(o.id), cachedObject[String(o.id)].name, cachedObject[String(o.id)].desc)
+                        } else {
+                            await c.botUI.message(msg, 
+                                TX_ALREADY_TOOL + '#' + o.id + ' *' + o.desc + '*' + '\n' +o.name, 
+                                { mark_to_remove: true })
                         }
-                    
+                    }
                 }
 
-                await c.botUI.message(msg, TX_FOUND_1 + cur_i + TX_FOUND_2 + SEARCH_LIMIT + TX_FOUND_3, {mark_to_remove: true})
+                // console.log(searchRes)
+                // await showAddedTool(id, cachedObject[id].name, cachedObject[id].desc)
+                // await addTool(id, cachedObject[id].name, cachedObject[id].desc)
 
+ 
             } else {
-                await c.botUI.message(msg, TX_SEARCH_NORESULT, { mark_to_remove: true })
+            
+                // V2 поиск и вывод резкльтата
+                const searchRes = await SearchToolsByStr(c, msg.text)
+
+                if (searchRes.length) {
+                    
+                    let cur_i = 0
+                    for (let i = 0; i < searchRes.length; i++) {
+                        
+                        const o = searchRes[i]
+
+                        // показываем только те, которые не добавлены
+                        if (cur_i < SEARCH_LIMIT)
+                            if (addedTools && !addedTools[String(o.id)]) {
+                                await showFoundedToolAndCashIt(o.id, o.name, o.desc, o.url)
+                                cur_i ++
+                            }
+                        
+                    }
+
+                    await c.botUI.message(msg, TX_FOUND_1 + cur_i + TX_FOUND_2 + SEARCH_LIMIT + TX_FOUND_3, {mark_to_remove: true})
+
+                } else {
+                    await c.botUI.message(msg, TX_SEARCH_NORESULT, { mark_to_remove: true })
+                }
             }
 
             await showEndMessage()
@@ -216,7 +258,7 @@ export default async (msg:any, c: MainContext, editMode:Boolean, end:()=>any) =>
                     //     await c.botUI.message(msg, cachedObject[id].name + TX_EXISTS_2, {mark_to_remove: true})
                     // } else {
                         await showAddedTool(id, cachedObject[id].name, cachedObject[id].desc)
-                        addedTools[id] = '#' + id + ' ' + cachedObject[id].desc + '(' + cachedObject[id].name + ')'
+                        await addTool(id, cachedObject[id].name, cachedObject[id].desc)
 
                         await c.botUI.delete(msg, searchResultMessages[id])
                         delete searchResultMessages[id] 
